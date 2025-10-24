@@ -35,6 +35,10 @@ const turfSchema = new mongoose.Schema({
         required: [true, 'Phone number is required'],
         trim: true,
         minlength: [10, 'Phone number must be at least 10 digits'],
+    },
+    turfImg: {
+        type: String,
+        default: null
     }
 }, { timestamps: true })
 
