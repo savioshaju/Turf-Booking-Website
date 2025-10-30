@@ -20,14 +20,14 @@ const bookingSchema = new mongoose.Schema({
         type: Date,
         required: [true, 'Booking date is required']
     },
-    time: {
+    Slot: {
         type: String,
-        required: [true, 'Booking time is required'],
+        required: [true, 'Booking Slot is required'],
         trim: true
     },
     status: {
         type: String,
-        enum: ['pending', 'confirmed', 'cancelled'],
+        enum: ['confirmed', 'cancelled'],
         default: 'pending'
     }
 }, { timestamps: true });

@@ -25,11 +25,6 @@ const paymentSchema = new mongoose.Schema({
         enum: ['upi', 'card', 'wallet', 'cash'],
         required: [true, 'Payment method is required']
     },
-    paymentStatus: {
-        type: String,
-        enum: ['pending', 'successful', 'failed', 'refunded'],
-        default: 'pending'
-    },
     paymentDate: {
         type: Date,
         default: Date.now

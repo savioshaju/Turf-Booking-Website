@@ -39,6 +39,11 @@ const turfSchema = new mongoose.Schema({
     turfImg: {
         type: String,
         default: null
+    },
+    adminId: {
+        type: mongoose.Schema.Types.ObjectId, 
+        required: [true, 'Admin ID is required'],
+        ref: 'Admin' 
     }
 }, { timestamps: true })
 
