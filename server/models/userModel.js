@@ -20,7 +20,12 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['user', 'admin'], 
+        enum: ['user', 'admin'],
+        default: 'user'
+    },
+    status: {
+        type: String,
+        enum: ['active', 'blocked'],
         default: 'user'
     },
     phone: {
@@ -29,6 +34,6 @@ const userSchema = new mongoose.Schema({
         trim: true,
         minlength: [10, 'Phone number must be at least 10 digits'],
     },
-}, { timestamps: true }); 
+}, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);
