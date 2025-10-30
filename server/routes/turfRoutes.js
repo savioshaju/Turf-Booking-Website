@@ -1,12 +1,13 @@
 const express = require('express')
 const {createTurf,deleteTurf,updateTurf,getAllTurfs,getTurfById, getMyTurfs} = require('../controllers/turfControllers.js')
-const authAdmin = require('../middlewares/authAdmin.js')
+const authAdmin = require('../middlewares/authAdmin.js');
+const upload = require('../middlewares/multer.js');
 
 const turfRouter = express.Router()
 
 
 // Create new turf
-turfRouter.post('/create',authAdmin, createTurf);
+turfRouter.post('/create',authAdmin,upload.single("image") ,createTurf);
 // Get all turfs
 turfRouter.get('/all', getAllTurfs);
 // Get single turf by ID

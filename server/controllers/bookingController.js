@@ -1,46 +1,57 @@
-const Payment = require('../models/paymentModel.js');
-const Booking = require('../models/bookingModel.js');
+const Payment = require('../models/paymentModel.js')
+const Booking = require('../models/bookingModel.js')
+const Turf = require('../models/turfModel.js')
+
+function parseTimeToHour(timeStr, roundType) {
+    const [time, modifier] = timeStr.split(' ')
+    let [hours, minutes] = time.split(':').map(Number)
+    if (modifier === 'PM' && hours !== 12) hours += 12
+    if (modifier === 'AM' && hours === 12) hours = 0
+    if (roundType === 'ceil' && minutes > 0) hours += 1
+    if (roundType === 'floor') hours = hours
+    return hours
+}
 
 const getFreeSlots = async (req, res) => {
     try {
-        const { turfId } = req.params;
-        const { date } = req.body;
+        const { turfId } = req.params
+        const { date } = req.body
 
-        if (!date) {
-            return res.status(400).json({ success: false, message: 'Date is required in body' });
-        }
+        if (!date) return res.status(400).json({ success: false, message: 'Date is required in body' })
 
-        const allSlots = Array.from({ length: 24 }, (_, i) => (i + 1).toString());
+        const turf = await Turf.findById(turfId)
+        if (!turf) return res.status(404).json({ success: false, message: 'Turf not found' })
 
-        const dayStart = new Date(date);
-        dayStart.setHours(0, 0, 0, 0);
-        const dayEnd = new Date(dayStart);
-        dayEnd.setHours(23, 59, 59, 999);
+        const openHour = parseTimeToHour(turf.openTime, 'ceil')
+        const closeHour = parseTimeToHour(turf.closeTime, 'floor')
+
+        const allSlots = []
+        for (let h = openHour; h <= closeHour; h++) allSlots.push(h.toString())
+
+        const dayStart = new Date(date)
+        dayStart.setHours(0, 0, 0, 0)
+        const dayEnd = new Date(dayStart)
+        dayEnd.setHours(23, 59, 59, 999)
 
         const bookings = await Booking.find({
             turfId,
             date: { $gte: dayStart, $lte: dayEnd }
-        });
+        })
 
-        const bookedSlots = [];
+        const bookedSlots = []
         bookings.forEach(booking => {
-            if (booking.Slot) {
-                booking.Slot.split(',').forEach(slot => bookedSlots.push(slot.trim()));
-            }
-        });
+            if (booking.Slot) booking.Slot.split(',').forEach(slot => bookedSlots.push(slot.trim()))
+        })
 
-        const bookedSet = new Set(bookedSlots);
+        const bookedSet = new Set(bookedSlots)
+        const freeSlots = allSlots.filter(slot => !bookedSet.has(slot))
 
-        const freeSlots = allSlots.filter(slot => !bookedSet.has(slot));
-
-        res.status(200).json({ success: true, data: freeSlots });
-
+        res.status(200).json({ success: true, data: freeSlots })
     } catch (error) {
-        console.error('Get Free Slots Error:', error);
-        res.status(500).json({ success: false, message: 'Get Free Slots Error: Server error', error: error.message });
+        console.error('Get Free Slots Error:', error)
+        res.status(500).json({ success: false, message: 'Get Free Slots Error: Server error', error: error.message })
     }
-};
-
+}
 
 const createBooking = async (req, res) => {
     try {

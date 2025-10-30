@@ -1,5 +1,7 @@
 const Turf = require('../models/turfModel')
 
+const {cloudinaryInstance} = require('../config/cloudinary')
+
 const createTurf = async (req, res) => {
     try {
         const { name, location, type, cost, openTime, closeTime, phone, turfImg } = req.body
@@ -9,6 +11,12 @@ const createTurf = async (req, res) => {
         }
         const adminId = req.user.id
 
+        const file = req.file
+
+        const cloudinaryResponse = await cloudinaryInstance.uploader.upload(file.path)
+
+        console.log("Image",cloudinaryResponse.url)
+
         const turf = await Turf.create({
             name,
             location,
@@ -17,7 +25,7 @@ const createTurf = async (req, res) => {
             openTime,
             closeTime,
             phone,
-            turfImg: turfImg || null,
+            turfImg: cloudinaryResponse.url,
             adminId
         })
 
