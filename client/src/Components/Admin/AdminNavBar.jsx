@@ -20,11 +20,6 @@ function AdminNavBar() {
             </Link>
           </li>
           <li>
-            <Link to="/admin/login" className="hover:text-gray-400 transition-colors">
-              Logout
-            </Link>
-          </li>
-          <li>
             <Link to="/admin/users" className="hover:text-gray-400 transition-colors">
               User
             </Link>

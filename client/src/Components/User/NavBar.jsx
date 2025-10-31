@@ -1,10 +1,17 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
 
 function NavBar() {
-  const location = useLocation()
+  const location = useLocation();
   const [activeNav, setActiveNav] = useState(location.pathname)
+
+  useEffect(() => {
+    setActiveNav(location.pathname);
+    localStorage.setItem('activeNav', location.pathname)
+  }, [location.pathname]);
+
   const { userData } = useSelector(state => state.user)
   const isHome = location.pathname === '/';
 
@@ -86,7 +93,7 @@ function NavBar() {
                 >
                   {item.isEmail ? (
                     <>
-                    
+
                       <span className="hidden md:inline text-sm lg:text-base font-semibold truncate max-w-[140px] lg:max-w-[160px]">
                         {item.label}
                       </span>
