@@ -5,14 +5,16 @@ const router = require('./routes/index.js')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 
-const port = process.env.PORT
+const port = 3000
 const app = express()
 
-app.use(cors({
-    origin: process.env.BASE_URL,
-    methods: ['GET', 'POST', 'DELETE', 'PUT','PATCH'],
-    credentials: true
-}))
+
+const corsOptions = {
+  origin: process.env.BASE_URL,
+  credentials: true,
+};
+app.use(cors(corsOptions));
+
 
 
 connectDB()
@@ -23,7 +25,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 //http://localhost:3000/api
-app.use('/api',router)
+app.use('/api', router)
 
 
 app.listen(port, () => {
