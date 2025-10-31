@@ -1,33 +1,36 @@
-const express = require('express')
-require('dotenv').config()
-const connectDB = require('./config/db.js')
-const router = require('./routes/index.js')
-const cookieParser = require('cookie-parser')
-const cors = require('cors')
+const express = require('express');
+require('dotenv').config();
+const connectDB = require('./config/db.js');
+const router = require('./routes/index.js');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
-const port = 3000
-const app = express()
+const app = express();
 
+const allowedOrigins = process.env.FRONTEND_URLS
+  ? process.env.FRONTEND_URLS.split(',')
+  : [];
 
 const corsOptions = {
-  origin: process.env.BASE_URL,
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 };
+
 app.use(cors(corsOptions));
+app.use(express.json());
+app.use(cookieParser());
 
+connectDB();
+app.use('/api', router);
 
-
-connectDB()
-
-
-app.use(express.json())
-
-app.use(cookieParser())
-
-//http://localhost:3000/api
-app.use('/api', router)
-
-
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`App running on port ${port}`)
-})
+  console.log(`Server running on port ${port}`);
+});
