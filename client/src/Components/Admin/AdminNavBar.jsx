@@ -11,7 +11,7 @@ function AdminNavBar() {
         <ul className="flex space-x-6">
           <li>
             <Link to="/admin/allturf" className="hover:text-gray-400 transition-colors">
-              Bookings
+              Turfs
             </Link>
           </li>
           <li>
@@ -21,7 +21,7 @@ function AdminNavBar() {
           </li>
           <li>
             <Link to="/admin/users" className="hover:text-gray-400 transition-colors">
-              User
+              Users
             </Link>
           </li>
         </ul>
