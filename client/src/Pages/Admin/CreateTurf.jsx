@@ -20,8 +20,13 @@ export default function AddTurfForm({ onCancel, onSuccess }) {
 
   function handleChange(e) {
     const { name, value } = e.target
-    setForm({ ...form, [name]: value })
+
+    setForm({
+      ...form,
+      [name]: name === 'cost' ? Math.max(Number(value), 0) : value
+    })
   }
+
 
   function handleTimeChange(e) {
     const { name, value } = e.target
@@ -53,6 +58,7 @@ export default function AddTurfForm({ onCancel, onSuccess }) {
     if (!form.phone.match(/^\d{10}$/)) return 'Phone number must be 10 digits'
     if (!form.openTime) return 'Opening time required'
     if (!form.closeTime) return 'Closing time required'
+    if (!form.turfImg) return 'Turf Image required'
     return null
   }
 
@@ -69,8 +75,12 @@ export default function AddTurfForm({ onCancel, onSuccess }) {
     formData.append('location', form.location.trim())
     formData.append('type', form.type.trim())
     formData.append('cost', Number(form.cost))
-    formData.append('openTime', `${form.openTime} ${form.openPeriod}`)
-    formData.append('closeTime', `${form.closeTime} ${form.closePeriod}`)
+    const formatHour = (hour) => {
+      const h = Number(hour)
+      return (h < 10 ? '0' + h : h) + ':00'
+    }
+    formData.append('openTime', `${formatHour(form.openTime)} ${form.openPeriod}`)
+    formData.append('closeTime', `${formatHour(form.closeTime)} ${form.closePeriod}`)
     formData.append('phone', form.phone.trim())
     if (form.turfImg) formData.append('image', form.turfImg)
 
@@ -112,8 +122,10 @@ export default function AddTurfForm({ onCancel, onSuccess }) {
 
   }
 
+
+
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gradient-to-br from-green-50 to-emerald-100 p-4">
+    <div className="min-h-screen flex justify-center items-center  p-4">
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-2xl rounded-3xl p-6 w-full max-w-4xl border-l-8 border-emerald-500"

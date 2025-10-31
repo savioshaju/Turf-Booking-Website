@@ -126,10 +126,10 @@ const deleteBooking = async (req, res) => {
     try {
         const { id } = req.params
         const booking = await Booking.findById(id)
-        if (!booking){
+        if (!booking) {
 
             return res.status(404).json({ success: false, message: 'Booking not found', data: null })
-        } 
+        }
         booking.status = booking.status === 'confirmed' ? 'cancelled' : 'confirmed'
 
         await booking.save()
@@ -159,6 +159,34 @@ const getAllBookings = async (req, res) => {
         res.status(500).json({ success: false, message: 'Get All Bookings Error: Server error', error: error.message })
     }
 }
+const getAllTurfBookings = async (req, res) => {
+    try {
+        const turfId = req.params.id;
+
+        const turfExists = await Turf.findById(turfId);
+        if (!turfExists) {
+            return res.status(404).json({ success: false, message: 'No turfs found' });
+        }
+
+        const today = new Date();
+        const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+
+        const bookings = await Booking.find({
+            turfId,
+            date: { $gte: startOfDay, $lt: endOfDay }
+        }).populate('userId', 'name');
+
+        if (bookings.length === 0) {
+            return res.status(200).json({ success: true, message: 'No bookings found for today', bookings: [] });
+        }
+
+        res.status(200).json({ success: true, message: 'Today\'s bookings found', bookings });
+    } catch (error) {
+        console.error('GET today\'s Turf booking Error:', error);
+        res.status(500).json({ success: false, message: 'Server Error', error: error.message });
+    }
+};
 
 
-module.exports = { getFreeSlots, createBooking, deleteBooking, getAllBookings };
+module.exports = { getFreeSlots, createBooking, deleteBooking, getAllBookings, getAllTurfBookings };

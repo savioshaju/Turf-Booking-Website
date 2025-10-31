@@ -10,7 +10,7 @@ function AdminNavBar() {
         </div>
         <ul className="flex space-x-6">
           <li>
-            <Link to="/admin/bookings" className="hover:text-gray-400 transition-colors">
+            <Link to="/admin/allturf" className="hover:text-gray-400 transition-colors">
               Bookings
             </Link>
           </li>

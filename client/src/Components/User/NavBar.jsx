@@ -20,6 +20,11 @@ function NavBar() {
             </Link>
           </li>
           <li>
+            <Link to="/user/profile" className="hover:text-gray-200 transition-colors">
+              Profile
+            </Link>
+          </li>
+          <li>
             <Link to="/user/mybooking" className="hover:text-gray-200 transition-colors">
               My Bookings
             </Link>

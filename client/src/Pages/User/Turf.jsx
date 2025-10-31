@@ -49,6 +49,7 @@ function Turf() {
     if (loading)
         return <div className="flex justify-center items-center h-screen text-xl text-gray-700">Loading turfs...</div>
 
+
     if (turfs.length === 0)
         return <div className="text-center py-16 bg-gray-50 rounded-lg text-xl text-gray-500">No turfs found.</div>
 
@@ -58,11 +59,15 @@ function Turf() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {turfs.map(turf => (
                     <div key={turf._id} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl flex flex-col transition-all duration-300">
+                       
+                       
                         <div className="h-48 w-full bg-gray-200 flex items-center justify-center">
                             {turf.turfImg
                                 ? <img src={turf.turfImg} alt={turf.name} className="h-full w-full object-cover" />
                                 : <Image size={48} className="text-gray-400" />}
                         </div>
+
+
                         <div className="p-6 flex-grow">
                             <h3 className="text-2xl font-semibold text-gray-800 mb-4">{turf.name}</h3>
                             <div className="space-y-3 text-gray-600">
@@ -77,6 +82,9 @@ function Turf() {
                                 </div>
                             </div>
                         </div>
+
+
+                        
                         <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex justify-between items-center">
                             <div className="flex items-center text-xl font-semibold text-green-700">
                                 <BadgeIndianRupee size={20} className="mr-1" />

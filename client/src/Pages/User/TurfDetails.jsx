@@ -18,6 +18,7 @@ const isTurfOpen = (openTime, closeTime) => {
     const now = new Date()
     const nowMinutes = now.getHours() * 60 + now.getMinutes()
     const openMinutes = timeToMinutes(openTime)
+
     const closeMinutes = timeToMinutes(closeTime)
     if (closeMinutes < openMinutes) return nowMinutes >= openMinutes || nowMinutes <= closeMinutes
     return nowMinutes >= openMinutes && nowMinutes <= closeMinutes
@@ -26,6 +27,8 @@ const isTurfOpen = (openTime, closeTime) => {
 function TurfDetail() {
     const { id } = useParams()
     const dispatch = useDispatch()
+
+
     const storedTurf = useSelector(state => state.turfDetail.turfs[id])
 
     const [turf, setTurf] = useState(storedTurf || null)
@@ -53,6 +56,9 @@ function TurfDetail() {
     if (loading)
         return <div className="flex justify-center items-center h-screen text-xl text-gray-700">Loading turf details...</div>
 
+
+
+
     if (!turf)
         return <div className="text-center py-16 bg-gray-50 rounded-lg text-xl text-gray-500">Turf not found.</div>
 
@@ -62,6 +68,7 @@ function TurfDetail() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
 
                 <div className="lg:col-span-2">
                     <div className="h-64 md:h-96 w-full bg-gray-200 rounded-xl overflow-hidden flex items-center justify-center shadow-lg">
@@ -135,6 +142,7 @@ function TurfDetail() {
                         </Link>
                     </div>
                 </div>
+
 
             </div>
         </div>

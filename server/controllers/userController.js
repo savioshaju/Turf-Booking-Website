@@ -187,7 +187,7 @@ const updateUser = async (req, res) => {
 
         if (email) {
             const userExist = await User.findOne({ email })
-            if (userExist) {
+             if (userExist && userExist._id.toString() !== userId)  {
                 return res.status(400).json({ success: false, message: "User already exists" })
             }
 

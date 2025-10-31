@@ -7,12 +7,14 @@ import BookTurf from "../Pages/User/BookTurf";
 import Turf from "../Pages/User/Turf";
 import TurfDetails from "../Pages/User/TurfDetails";
 import Layout from "../MainLayout/Layout"
-import Adminbooking from "../Pages/Admin/Adminbooking";
+import AdminAllturf from "../Pages/Admin/AdminAllturf";
 import CreateTurf from "../Pages/Admin/CreateTurf";
 import AdminLayout from "../MainLayout/AdminLayout";
 import AdminProtectLayout from "./AdminProtectLayout";
 import UserProtectLayout from "./UserProtectLayout";
 import Payment from "../Pages/User/Payment";
+import AdminTurfDetails from "../Pages/Admin/AdminTurfDetails";
+import ProfilePage from "../Pages/User/ProfilePage";
 
 const router = createBrowserRouter([
     {
@@ -54,6 +56,10 @@ const router = createBrowserRouter([
                     {
                         path: 'bookturf/:id',
                         element: <BookTurf />
+                    },
+                    {
+                        path: 'profile',
+                        element: <ProfilePage />
                     }
                 ]
             }
@@ -72,12 +78,16 @@ const router = createBrowserRouter([
                 element: <AdminProtectLayout />,
                 children: [
                     {
-                        path: 'bookings',
-                        element: <Adminbooking />
+                        path: 'allturf',
+                        element: <AdminAllturf />
                     },
                     {
                         path: 'create-turf',
                         element: <CreateTurf />
+                    },
+                    {
+                        path: 'turf-details/:id',
+                        element: <AdminTurfDetails/>
                     }
                 ]
             }

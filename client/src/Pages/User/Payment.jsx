@@ -20,6 +20,8 @@ const Payment = () => {
     const booking = useSelector(state => state.booking)
     const [paymentMethod, setPaymentMethod] = useState("creditCard")
     const [paymentData, setPaymentData] = useState({})
+
+    
     const [errors, setErrors] = useState({})
     const [payStatus, setPayStatus] = useState("idle")
 
