@@ -7,10 +7,9 @@ const cors = require('cors');
 
 const app = express();
 
-// Dynamic CORS: allow all Vercel frontends (or all Render frontends if you move there)
 const corsOptions = {
   origin: function(origin, callback) {
-    if (!origin) return callback(null, true); // allow server-to-server requests
+    if (!origin) return callback(null, true); 
     if (/\.vercel\.app$/.test(origin) || /\.onrender\.com$/.test(origin)) {
       console.log(`CORS allowed for origin: ${origin}`);
       return callback(null, true);
