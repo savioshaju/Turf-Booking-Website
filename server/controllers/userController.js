@@ -29,7 +29,6 @@ const signup = async (req, res) => {
 
 
         const token = createToken(savedUser._id, savedUser.role);
-        console.log("Token:", token);
 
         res.cookie('token', token, {
             httpOnly: true,
@@ -83,7 +82,6 @@ const login = async (req, res) => {
 
 
         const token = createToken(userExist._id, userExist.role);
-        console.log("Token:", token);
 
         res.cookie('token', token, {
             httpOnly: true,

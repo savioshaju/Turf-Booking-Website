@@ -158,7 +158,6 @@ export default function Signup() {
                 data: payload
             })
                 .then((res) => {
-                    console.log(res)
                     const result = res.data;
                     if (res.data.success) {
                         dispatch(saveUserData({

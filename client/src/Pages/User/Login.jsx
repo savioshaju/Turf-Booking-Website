@@ -49,7 +49,6 @@ export default function Login() {
                 data: credentials
             })
                 .then((res) => {
-                    console.log('res?.data?.data :>> ', res?.data?.data);
                     toast.success(res?.data?.message)
                     dispatch(saveUserData(res?.data?.data))
                     setTimeout(() => navigate('/'), 3000);

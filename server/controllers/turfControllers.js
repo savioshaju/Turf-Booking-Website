@@ -15,7 +15,6 @@ const createTurf = async (req, res) => {
 
         const cloudinaryResponse = await cloudinaryInstance.uploader.upload(file.path)
 
-        console.log("Image",cloudinaryResponse.url)
 
         const turf = await Turf.create({
             name,
@@ -72,7 +71,6 @@ const getMyTurfs = async (req, res) => {
     try {
         const adminId = req.user.id
         const myTurfs = await Turf.find({ adminId })
-        console.log(adminId)
         if (myTurfs.length === 0) {
             return res.status(404).json({ success: false, message: 'No turfs found for this admin' })
         }
@@ -89,7 +87,6 @@ const updateTurf = async (req, res) => {
         const { id } = req.params
         const adminId = req.user.id
 
-        console.log(req.body);
 
 
         const turf = await Turf.findById(id)
@@ -123,7 +120,6 @@ const deleteTurf = async (req, res) => {
     try {
         const { id } = req.params
         const adminId = req.user.id
-        console.log(adminId)
 
         const turf = await Turf.findById(id)
 
