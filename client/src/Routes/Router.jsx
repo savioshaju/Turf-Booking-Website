@@ -6,12 +6,13 @@ import Bookings from "../Pages/User/Bookings";
 import BookTurf from "../Pages/User/BookTurf";
 import Turf from "../Pages/User/Turf";
 import TurfDetails from "../Pages/User/TurfDetails";
-import Layout from "./Layout";
+import Layout from "../MainLayout/Layout"
 import Adminbooking from "../Pages/Admin/Adminbooking";
 import CreateTurf from "../Pages/Admin/CreateTurf";
-import AdminLayout from "./AdminLayout";
+import AdminLayout from "../MainLayout/AdminLayout";
 import AdminProtectLayout from "./AdminProtectLayout";
 import UserProtectLayout from "./UserProtectLayout";
+import Payment from "../Pages/User/Payment";
 
 const router = createBrowserRouter([
     {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
                 element: <UserProtectLayout />,
                 children: [
                     {
+                        path: 'payment',
+                        element: <Payment />
+                    },
+                    {
                         path: 'mybooking',
                         element: <Bookings />
                     },
@@ -60,7 +65,7 @@ const router = createBrowserRouter([
         children: [
             {
                 path: 'login',
-                element: <Login /> 
+                element: <Login />
             },
             {
                 path: '',

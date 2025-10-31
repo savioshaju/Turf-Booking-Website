@@ -3,20 +3,32 @@ import axiosInstance from '../../Config/axiosInstance'
 import { toast } from 'react-toastify'
 import { MapPin, Clock, BadgeIndianRupee, Phone, Tag, Image } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { setTurfs } from '../../store/slice/turfSlice'
 
 function Turf() {
-    const [turfs, setTurfs] = useState([])
+    const dispatch = useDispatch()
+    const turfs = useSelector(state => state.turfs.allTurfs)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        axiosInstance({
-            method: 'GET',
-            url: '/turf/all'
-        })
-            .then(res => setTurfs(res.data.data))
-            .catch(err => toast.error(err?.response?.data?.message || 'Failed to fetch turfs'))
-            .finally(() => setLoading(false))
-    }, [])
+        if (turfs.length === 0) {
+
+            axiosInstance.get('/turf/all')
+                .then(res => {
+                    dispatch(setTurfs(res.data.data))
+                })
+                .catch((err) => {
+
+                    toast.error(err?.response?.data?.message || 'Failed to fetch turfs')
+                })
+                .finally(() => setLoading(false))
+        }
+        else {
+            setLoading(false)
+        }
+    }, [dispatch])
+
 
     const timeToMinutes = timeStr => {
         const [time, meridian] = timeStr.split(' ')
@@ -34,10 +46,10 @@ function Turf() {
         return nowMinutes >= openMinutes && nowMinutes <= closeMinutes
     }
 
-    if (loading) 
+    if (loading)
         return <div className="flex justify-center items-center h-screen text-xl text-gray-700">Loading turfs...</div>
 
-    if (turfs.length === 0) 
+    if (turfs.length === 0)
         return <div className="text-center py-16 bg-gray-50 rounded-lg text-xl text-gray-500">No turfs found.</div>
 
     return (

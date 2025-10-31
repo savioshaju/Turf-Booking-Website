@@ -4,7 +4,7 @@ const {createBooking,getAllBookings,deleteBooking,getFreeSlots} = require('../co
 
 const bookingRouter = express.Router();
 
-bookingRouter.get('/free-slots/:turfId', getFreeSlots);
+bookingRouter.post('/free-slots/:turfId', getFreeSlots);
 // Create a new booking
 bookingRouter.post('/create', authUser, createBooking);
 // Cancel a booking by ID
