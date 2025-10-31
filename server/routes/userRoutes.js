@@ -3,7 +3,7 @@ const express = require('express')
 
 const userRouter = express.Router()
 
-const { signup, login, profile, checkUser ,checkAdmin,updateUser,updateUserById,deleteUser,deleteUserById, logout} = require('../controllers/userController.js')
+const { signup, login, profile, checkUser ,checkAdmin,updateUser,updateUserById,deleteUser,deleteUserById, logout,getAllUsers} = require('../controllers/userController.js')
 const validateUser = require('../middlewares/userMiddlewares.js')
 const authUser = require('../middlewares/authUser.js')
 const authAdmin = require('../middlewares/authAdmin.js')
@@ -33,5 +33,8 @@ userRouter.get('/check-admin', authUser, checkAdmin)
 userRouter.delete('/deleteById/:id', authAdmin, deleteUserById)
 //update - admin
 userRouter.put('/updateById/:id', authAdmin, updateUserById)
+//get all users -admin
+userRouter.get('/all', authAdmin, getAllUsers);
+
 
 module.exports = userRouter

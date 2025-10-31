@@ -193,8 +193,8 @@ const ProfilePage = () => {
     }
 
 
-    const getClassName = field => `w-full p-3 border rounded-xl focus:outline-none focus:border-green-500 ${formErrors[field] ? 'border-red-500' : 'border-gray-300'
-        }`
+    const getClassName = field => `w-full p-3 border rounded-xl focus:outline-none focus:border-green-500 
+    ${formErrors[field] ? 'border-red-500' : 'border-gray-300' }`
 
 
 
@@ -207,7 +207,7 @@ const ProfilePage = () => {
 
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
+        <div className="min-h-screen py-8">
             <div className="max-w-4xl mx-auto px-4">
 
 

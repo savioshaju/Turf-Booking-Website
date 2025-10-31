@@ -77,7 +77,7 @@ export default function Bookings() {
 
   return (
     <div className="p-6 flex flex-col gap-8">
-      <h1 className="text-4xl font-bold text-center text-gray-900 mb-4">
+      <h1 className="text-4xl font-bold text-start text-gray-900 mb-4">
         My Turf Bookings
       </h1>
 

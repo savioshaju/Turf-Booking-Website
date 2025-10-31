@@ -15,6 +15,9 @@ import UserProtectLayout from "./UserProtectLayout";
 import Payment from "../Pages/User/Payment";
 import AdminTurfDetails from "../Pages/Admin/AdminTurfDetails";
 import ProfilePage from "../Pages/User/ProfilePage";
+import Users from "../Pages/Admin/Users";
+import About from "../Pages/Shared/About";
+import Contact from "../Pages/Shared/Contact";
 
 const router = createBrowserRouter([
     {
@@ -40,6 +43,14 @@ const router = createBrowserRouter([
             {
                 path: 'turf-details/:id',
                 element: <TurfDetails />
+            },
+            {
+                path: 'contact',
+                element: <Contact/>
+            },
+            {
+                path: 'about',
+                element: <About/>
             },
             {
                 path: 'user',
@@ -88,6 +99,10 @@ const router = createBrowserRouter([
                     {
                         path: 'turf-details/:id',
                         element: <AdminTurfDetails/>
+                    },
+                    {
+                        path: 'users',
+                        element: <Users/>
                     }
                 ]
             }

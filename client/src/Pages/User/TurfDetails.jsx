@@ -53,14 +53,25 @@ function TurfDetail() {
             .finally(() => setLoading(false))
     }, [id, turf, dispatch])
 
-    if (loading)
-        return <div className="flex justify-center items-center h-screen text-xl text-gray-700">Loading turf details...</div>
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        )
+    }
 
-
-
-
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        )
+    }
     if (!turf)
-        return <div className="text-center py-16 bg-gray-50 rounded-lg text-xl text-gray-500">Turf not found.</div>
+        return (
+            <div className="text-center py-16 bg-gray-50 rounded-lg text-xl text-gray-500">Turf not found.</div>
+        )
 
     const isOpen = isTurfOpen(turf.openTime, turf.closeTime);
 

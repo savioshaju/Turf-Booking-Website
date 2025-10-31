@@ -24,6 +24,11 @@ function AdminNavBar() {
               Logout
             </Link>
           </li>
+          <li>
+            <Link to="/admin/users" className="hover:text-gray-400 transition-colors">
+              User
+            </Link>
+          </li>
         </ul>
       </div>
     </nav>

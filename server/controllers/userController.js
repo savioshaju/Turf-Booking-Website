@@ -187,7 +187,7 @@ const updateUser = async (req, res) => {
 
         if (email) {
             const userExist = await User.findOne({ email })
-             if (userExist && userExist._id.toString() !== userId)  {
+            if (userExist && userExist._id.toString() !== userId) {
                 return res.status(400).json({ success: false, message: "User already exists" })
             }
 
@@ -245,8 +245,9 @@ const updateUserById = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Nothing to update.' })
         }
 
-        const validStatus = ['active', 'banned']
+        const validStatus = ['active', 'blocked']
         const validRoles = ['user', 'admin']
+
 
         if (role && !validRoles.includes(role)) {
             return res.status(400).json({ success: false, message: 'Invalid role provided.' })
@@ -338,4 +339,17 @@ const logout = async (req, res) => {
 }
 
 
-module.exports = { signup, login, profile, checkUser, checkAdmin, updateUser, updateUserById, deleteUser, deleteUserById, logout }
+const getAllUsers = async (req, res) => {
+    try {
+        const currentUserId = req.user.id
+        const users = await User.find({ _id: { $ne: currentUserId } }).select('-password');
+        res.status(200).json({ success: true, message: 'All users fetched successfully.', data: users });
+    } catch (error) {
+        console.error('Get All Users Error:', error);
+        res.status(500).json({ success: false, message: 'Get All Users Error: Server error' });
+    }
+};
+
+
+
+module.exports = { signup, login, profile, checkUser, checkAdmin, updateUser, updateUserById, deleteUser, deleteUserById, logout, getAllUsers }
