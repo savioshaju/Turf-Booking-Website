@@ -7,7 +7,7 @@ const cors = require('cors');
 
 const app = express();
 
-const allowedOrigins = process.env.FRONTEND_URLS
+const allowedOrigins = process.env.BASE_URL
   ? process.env.FRONTEND_URLS.split(',')
   : [];
 
