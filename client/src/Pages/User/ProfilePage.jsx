@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import axiosInstance from '../../Config/axiosInstance'
 import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux';
+import { clearUserData, saveUserData } from '../..//store/slice/userSlice';
 import { User, Mail, Phone, Edit2, Save, X, LogOut, Trash2, Shield, Check, X as XIcon } from 'lucide-react'
 
 const ProfilePage = () => {
     const navigate = useNavigate()
 
-
+    const dispatch = useDispatch()
     const [userData, setUserData] = useState({
         name: '',
         email: '',
@@ -169,7 +171,10 @@ const ProfilePage = () => {
                 success: 'Logged out successfully',
                 error: 'Failed to logout'
             }
-        ).then(() => navigate('/login'))
+        ).then(() => {
+            dispatch(clearUserData());
+            navigate('/login');
+        });
     }
 
     const handleDelete = () => {
@@ -180,6 +185,7 @@ const ProfilePage = () => {
                     url: '/user/delete'
                 })
                     .then(() => {
+                        dispatch(clearUserData());
                         navigate('/login')
                         return 'Account deleted and logged out'
                     }),
@@ -194,7 +200,7 @@ const ProfilePage = () => {
 
 
     const getClassName = field => `w-full p-3 border rounded-xl focus:outline-none focus:border-green-500 
-    ${formErrors[field] ? 'border-red-500' : 'border-gray-300' }`
+    ${formErrors[field] ? 'border-red-500' : 'border-gray-300'}`
 
 
 
