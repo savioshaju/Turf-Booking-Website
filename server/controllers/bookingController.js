@@ -149,7 +149,7 @@ const getAllBookings = async (req, res) => {
         const bookings = await Booking.find({ userId })
 
         if (!bookings || bookings.length === 0) {
-            return res.status(200).json({ success: true, data: {} })
+            return res.status(200).json({ success: true, data: [] })
         }
 
         res.status(200).json({ success: true, data: bookings })
