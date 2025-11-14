@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
 import { clearUserData, saveUserData } from '../..//store/slice/userSlice';
 import { User, Mail, Phone, Edit2, Save, X, LogOut, Trash2, Shield, Check, X as XIcon } from 'lucide-react'
-
+import { clearMyBookings } from '../../store/slice/myBookingSlice';
 const ProfilePage = () => {
     const navigate = useNavigate()
 
@@ -186,6 +186,7 @@ const ProfilePage = () => {
                 })
                     .then(() => {
                         dispatch(clearUserData());
+                        dispatch(clearMyBookings());
                         navigate('/login')
                         return 'Account deleted and logged out'
                     }),

@@ -14,7 +14,7 @@ import { resetBooking } from "../../store/slice/BookingSlice"
 import { useDispatch } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { useEffect } from "react"
-
+import { clearMyBookings } from "../../store/slice/myBookingSlice"
 
 const Payment = () => {
     const booking = useSelector(state => state.booking)
@@ -137,6 +137,7 @@ const Payment = () => {
             })
 
         setPaymentData({})
+        dispatch(clearMyBookings());
         setErrors({})
     }
 

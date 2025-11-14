@@ -57,6 +57,19 @@ function NavBar() {
       tooltip: 'Profile',
       isEmail: true
     },
+    {
+      path: '/login',
+      label: 'Login',
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+            d="M15 3h4a2 2 0 012 2v4m0 0l-6-6m6 6l-6 6M9 21H5a2 2 0 01-2-2v-4m0 0l6 6m-6-6l6-6" />
+        </svg>
+      ),
+      tooltip: 'Login',
+      isLogin: true
+    }
+    ,
   ]
 
   return (
@@ -81,6 +94,8 @@ function NavBar() {
                 <Link
                   to={item.path}
                   className={`
+                  ${userData?.email && item.label === 'Login' ? 'hidden' : ''} 
+                  ${(!userData?.email && (item.isEmail || item.label === 'Bookings')) ? 'hidden' : ''} 
                   px-4 py-3 lg:px-5 lg:py-3 rounded-xl transition-all duration-500 flex items-center justify-center
                   ${activeNav === item.path
                       ? 'text-green-600 shadow-2xl ring-2 ring-green-400 ring-opacity-80 transform scale-110'

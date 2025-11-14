@@ -13,9 +13,12 @@ const myBookingSlice = createSlice({
       const updated = action.payload
       const index = state.myBookings.findIndex(b => b._id === updated._id)
       if (index !== -1) state.myBookings[index] = updated
+    },
+    clearMyBookings: (state) => {
+      state.myBookings = []
     }
   }
 })
 
-export const { setMyBookings, updateBookingStatus } = myBookingSlice.actions
+export const { setMyBookings, updateBookingStatus, clearMyBookings } = myBookingSlice.actions
 export default myBookingSlice.reducer
