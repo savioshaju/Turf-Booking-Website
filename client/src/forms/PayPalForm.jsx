@@ -22,7 +22,7 @@ const PayPalForm = ({ onDataChange, errors, initialData }) => {
                 />
                 {errors.paypalEmail && (
                     <p className="text-red-500 text-sm flex items-center">
-                        <span className="mr-1">⚠</span> {errors.paypalEmail}
+                         {errors.paypalEmail}
                     </p>
                 )}
             </div>

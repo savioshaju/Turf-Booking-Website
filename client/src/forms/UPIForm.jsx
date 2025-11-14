@@ -22,7 +22,7 @@ const UPIForm = ({ onDataChange, errors, initialData }) => {
                 />
                 {errors.upiId && (
                     <p className="text-red-500 text-sm flex items-center">
-                        <span className="mr-1">⚠</span> {errors.upiId}
+                         {errors.upiId}
                     </p>
                 )}
             </div>

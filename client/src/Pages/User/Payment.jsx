@@ -21,7 +21,7 @@ const Payment = () => {
     const [paymentMethod, setPaymentMethod] = useState("creditCard")
     const [paymentData, setPaymentData] = useState({})
 
-    
+
     const [errors, setErrors] = useState({})
     const [payStatus, setPayStatus] = useState("idle")
 
@@ -29,10 +29,8 @@ const Payment = () => {
 
     const handlePaymentDataChange = (data) => {
         setPaymentData(prev => ({ ...prev, ...data }))
-        if (Object.keys(errors).length > 0) {
-            setErrors({})
-        }
     }
+
 
     const navigate = useNavigate()
 
@@ -64,10 +62,26 @@ const Payment = () => {
                 if (!paymentData.cardName?.trim()) {
                     newErrors.cardName = "Cardholder name is required"
                 }
+                // EXPIRY DATE VALIDATION (MM/YY must not be expired)
                 if (!paymentData.expiry) {
                     newErrors.expiry = "Expiry date is required"
-                } else if (!/^\d{2}\/\d{2}$/.test(paymentData.expiry)) {
-                    newErrors.expiry = "Invalid expiry format (MM/YY)"
+                } else {
+                    const parts = paymentData.expiry.split("/")
+                    if (parts.length !== 2) {
+                        newErrors.expiry = "Invalid expiry format (MM/YY)"
+                    } else {
+                        const [mm, yy] = parts.map(Number)
+                        const now = new Date()
+                        const currentMonth = now.getMonth() + 1
+                        const currentYear = now.getFullYear() % 100 
+
+                        if (mm < 1 || mm > 12) {
+                            newErrors.expiry = "Invalid month"
+                        }
+                        else if (yy < currentYear || (yy === currentYear && mm < currentMonth)) {
+                            newErrors.expiry = "Card has expired"
+                        }
+                    }
                 }
                 if (!paymentData.cvv) {
                     newErrors.cvv = "CVV is required"
@@ -127,6 +141,8 @@ const Payment = () => {
                 if (res.data && res.data.success) {
                     setPayStatus("success")
                     dispatch(resetBooking())
+                    setPaymentData({})
+                    setErrors({})
                 } else {
                     setPayStatus("failed")
                 }
@@ -136,9 +152,7 @@ const Payment = () => {
                 setPayStatus("failed")
             })
 
-        setPaymentData({})
         dispatch(clearMyBookings());
-        setErrors({})
     }
 
     const getButtonText = () => {
@@ -200,7 +214,7 @@ const Payment = () => {
                 <button
                     onClick={handleSubmit}
                     className="w-full py-4 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors shadow-md hover:shadow-lg flex items-center justify-center disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    disabled={Object.keys(errors).length > 0}
+                    disabled={payStatus === "paying"}
                 >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

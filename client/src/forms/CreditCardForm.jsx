@@ -58,7 +58,7 @@ const CreditCardForm = ({ onDataChange, errors, initialData }) => {
                 </div>
                 {errors.cardNumber && (
                     <p className="text-red-500 text-sm flex items-center">
-                        <span className="mr-1">⚠</span> {errors.cardNumber}
+                         {errors.cardNumber}
                     </p>
                 )}
             </div>
@@ -76,7 +76,7 @@ const CreditCardForm = ({ onDataChange, errors, initialData }) => {
                 />
                 {errors.cardName && (
                     <p className="text-red-500 text-sm flex items-center">
-                        <span className="mr-1">⚠</span> {errors.cardName}
+                         {errors.cardName}
                     </p>
                 )}
             </div>
@@ -96,7 +96,7 @@ const CreditCardForm = ({ onDataChange, errors, initialData }) => {
                     />
                     {errors.expiry && (
                         <p className="text-red-500 text-sm flex items-center">
-                            <span className="mr-1">⚠</span> {errors.expiry}
+                             {errors.expiry}
                         </p>
                     )}
                 </div>
@@ -122,7 +122,7 @@ const CreditCardForm = ({ onDataChange, errors, initialData }) => {
                     </div>
                     {errors.cvv && (
                         <p className="text-red-500 text-sm flex items-center">
-                            <span className="mr-1">⚠</span> {errors.cvv}
+                             {errors.cvv}
                         </p>
                     )}
                 </div>
