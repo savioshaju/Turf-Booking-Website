@@ -22,7 +22,7 @@ const Layout = () => {
       return;
     }
     checkUser();
-  }, [userData]);
+  }, []);
 
   function checkUser() {
     axiosInstance.get('/user/check-user')
