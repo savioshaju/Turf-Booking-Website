@@ -5,9 +5,10 @@ import Footer from '../Components/User/Footer';
 import { useDispatch, useSelector } from 'react-redux';
 import axiosInstance from '../Config/axiosInstance';
 import { clearUserData, saveUserData } from '../store/slice/userSlice';
-import { useState,useEffect
-  
- } from 'react';
+import {
+  useState, useEffect
+
+} from 'react';
 const Layout = () => {
   const location = useLocation();
   const dispatch = useDispatch()
@@ -16,8 +17,12 @@ const Layout = () => {
 
 
   useEffect(() => {
+    if (userData) {
+      setLoading(false);
+      return;
+    }
     checkUser();
-  }, []);
+  }, [userData]);
 
   function checkUser() {
     axiosInstance.get('/user/check-user')
