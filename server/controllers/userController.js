@@ -326,9 +326,12 @@ const deleteUser = async (req, res) => {
 
 const logout = async (req, res) => {
     try {
-        res.clearCookie("token")
-
-
+        res.clearCookie("token", {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'PRODUCTION',
+            sameSite: 'none',
+            path: '/', 
+        })
         res.status(200).json({ success: true, message: 'User Logout successfully.' });
     } catch (error) {
         console.error('Logout Error:', error);
