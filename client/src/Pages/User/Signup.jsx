@@ -160,22 +160,18 @@ export default function Signup() {
                 .then((res) => {
                     const result = res.data;
                     if (res.data.success) {
-                        dispatch(saveUserData({
-                            id: result.data.id,
-                            name: result.data.name,
-                            isAdmin: result.data.role === 'admin'
-                        }));
-                        toast.success('Account created successfully!'); 
+                        dispatch(saveUserData(res?.data?.data))
+                        toast.success('Account created successfully!');
                         setTimeout(() => navigate('/'), 3000);
                     } else {
                         setFormErrors({ general: result.message || "Signup failed" });
-                        toast.error(result.message || 'Signup failed'); 
+                        toast.error(result.message || 'Signup failed');
                     }
                 })
                 .catch((err) => {
                     console.error('Signup error:', err);
                     setFormErrors({ general: err.message || "Something went wrong" });
-                    toast.error(err.response?.data?.message || err.message || "Something went wrong"); 
+                    toast.error(err.response?.data?.message || err.message || "Something went wrong");
                 })
                 .finally(() => {
                     setIsSubmitting(false);

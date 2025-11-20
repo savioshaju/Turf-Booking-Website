@@ -125,7 +125,7 @@ const createBooking = async (req, res) => {
 const deleteBooking = async (req, res) => {
     try {
         const { id } = req.params
-        const booking = await Booking.findById(id)
+        const booking = await Booking.findById(id).populate('turfId', 'name')
         if (!booking) {
 
             return res.status(404).json({ success: false, message: 'Booking not found', data: null })
@@ -134,7 +134,16 @@ const deleteBooking = async (req, res) => {
 
         await booking.save()
 
-        res.status(200).json({ success: true, message: `Booking status updated to '${booking.status}'`, data: booking })
+         const formatted = {
+            id: booking._id,
+            teamName: booking.teamName,
+            date: booking.date,
+            Slot: booking.Slot,
+            status: booking.status,
+            turfName: booking.turfId?.name || "Unknown Turf"
+        }
+
+        res.status(200).json({ success: true, message: `Booking status updated to '${booking.status}'`, data: formatted })
 
     } catch (error) {
         console.error('Delete Booking Error:', error)
@@ -146,13 +155,26 @@ const getAllBookings = async (req, res) => {
     try {
         const userId = req.user.id
 
-        const bookings = await Booking.find({ userId })
+        const bookings = await Booking.find({ userId }).populate('turfId', 'name')
 
         if (!bookings || bookings.length === 0) {
-            return res.status(200).json({ success: true, data: [] })
+            return res.status(200).json({ success: true, data: { active: [], past: [] } })
         }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-        res.status(200).json({ success: true, data: bookings })
+        const formatted = bookings.map(b => ({
+            id: b._id,
+            teamName: b.teamName,
+            date: b.date,
+            Slot: b.Slot,
+            status: b.status,
+            turfName: b.turfId?.name || "Unknown Turf"
+        }));
+        const active = formatted.filter(b => new Date(b.date) >= today);
+        const past = formatted.filter(b => new Date(b.date) < today);
+
+        res.status(200).json({ success: true, data: { active: active, past: past } })
 
     } catch (error) {
         console.error('Get All Bookings Error:', error)

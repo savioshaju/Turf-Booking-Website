@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
-
-const authUser = (req, res, next) => {
+const User = require('../models/userModel');
+const authUser = async (req, res, next) => {
     try {
         const { token } = req.cookies;
 
@@ -15,8 +15,17 @@ const authUser = (req, res, next) => {
             return res.status(401).json({ success: false, message: 'Invalid token.' });
         }
 
-        req.user = decoded; 
-        
+        const user = await User.findById(decoded.id).select('status name role');
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'User not found.' });
+        }
+
+        if (user.status === 'blocked') {
+            return res.status(403).json({ success: false, message: 'Your account has been blocked. Contact support.', });
+        }
+
+        req.user = decoded;
+
         next();
     } catch (error) {
         console.error('Auth Error:', error);

@@ -16,8 +16,11 @@ export default function AdminProtectLayout() {
     }, []);
 
     useEffect(() => {
-        if (!loading && (!userData || userData.role !== 'admin')) {
+        if (!loading && (!userData)) {
             navigate('/login');
+        }
+        if (userData?.role !== 'admin') {
+            navigate('/');
         }
     }, [userData, loading, navigate]);
 
@@ -28,20 +31,26 @@ export default function AdminProtectLayout() {
                 setLoading(false);
             })
             .catch((err) => {
-                dispatch(clearUserData());
-                toast.error('Admin access needed');
+                toast.error( 'Admin access needed');
+                
+                if (!loading && (!userData)) {
+                    dispatch(clearUserData());
+                    navigate('/login');
+                }
+                if (userData?.role !== 'admin') {
+                    navigate('/');
+                }
                 setLoading(false);
-                navigate('/login');
             });
     }
 
     if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    )
-  }
+        return (
+            <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            </div>
+        )
+    }
 
     return <Outlet />;
 }

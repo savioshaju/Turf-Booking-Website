@@ -7,8 +7,8 @@ import { setMyBookings, updateBookingStatus } from '../../store/slice/myBookingS
 
 export default function Bookings() {
   const dispatch = useDispatch()
-  const bookings = useSelector(state => state.myBooking.myBookings)
-
+  const [tab, setTab] = useState("active")
+  const bookings = useSelector(state => state.myBooking.myBookings?.[tab] || [])
 
   const [loading, setLoading] = useState(true)
 
@@ -24,7 +24,7 @@ export default function Bookings() {
       url: '/booking/my-bookings'
     })
       .then(res => {
-        dispatch(setMyBookings(res?.data?.data || []))
+        dispatch(setMyBookings(res?.data?.data || { active: [], past: [] }))
       })
       .catch(err => {
         console.error('Booking Fetch Error:', err)
@@ -62,6 +62,7 @@ export default function Bookings() {
     })
   }
 
+
   function formatTime(slotString) {
     const slots = slotString.split(',').map(Number)
     return slots
@@ -72,7 +73,6 @@ export default function Bookings() {
         const endPeriod = s < 12 ? 'AM' : 'PM'
         return `${startHour}:00 ${startPeriod} - ${endHour}:00 ${endPeriod}`
       })
-      .join(', ')
   }
 
   return (
@@ -90,57 +90,81 @@ export default function Bookings() {
           No turf bookings yet.
         </p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {bookings.map(b => (
-            <div
-              key={b._id}
-              className={`p-6 rounded-2xl shadow-xl relative 
+        <>
+          <div className="flex gap-6 mb-6">
+            <button
+              onClick={() => setTab("active")}
+              className={`px-4 py-2 font-semibold transition-all
+              ${tab === "active" ? "text-green-700 border-b-4 border-green-600" : "text-gray-500"}`} >
+              Active
+            </button>
+
+            <button
+              onClick={() => setTab("past")}
+              className={`px-4 py-2 font-semibold transition-all
+              ${tab === "past" ? "text-green-700 border-b-4 border-green-600" : "text-gray-500"}`}>
+              Past
+            </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {bookings?.map(b => (
+              <div
+                key={b.id}
+                className={`p-6 rounded-2xl shadow-xl relative 
               ${b.status === 'confirmed'
-                  ? 'border-l-8 border-green-500'
-                  : ' border-l-8 border-yellow-500'}
+                    ? 'border-l-8 border-green-500'
+                    : ' border-l-8 border-yellow-500'}
               flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_#00000025]`}
-            >
-              <div>
-                <div className="text-2xl font-bold text-gray-800 mb-1">
-                  {b.teamName}
-                </div>
-                <div className="flex items-center text-gray-700 gap-2">
-                  <MapPin className="w-4 h-4" />
-                  <span className="text-sm">{b.turfId}</span>
-                </div>
-                <div className="mt-4 space-y-2 text-gray-700">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-indigo-600" />
-                    <span>{formatDate(b.date)}</span>
+              >
+                <div>
+                  <div className="text-2xl font-bold text-gray-800 mb-1">
+                    {b.teamName}
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-indigo-600" />
-                    <span className="text-sm">{formatTime(b.Slot)}</span>
+                  <div className="flex items-center text-gray-700 gap-2">
+                    <MapPin className="w-4 h-4" />
+                    <span className="text-sm">{b.turfName}</span>
+                  </div>
+                  <div className="mt-4 space-y-2 text-gray-700">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 text-indigo-600" />
+                      <span>{formatDate(b.date)}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-indigo-600" />
+                      <div className="text-sm max-h-10 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
+                        {formatTime(b.Slot).map((slot, i) => (
+                          <div key={i}>{slot}</div>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="mt-6 flex justify-between items-center">
-                <span
-                  className={`px-3 py-1 rounded-full text-sm font-semibold 
+                <div className="mt-6 flex justify-between items-center">
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-semibold 
                   ${b.status === 'confirmed'
-                      ? 'bg-green-200 text-green-700'
-                      : 'bg-yellow-200 text-yellow-700'}`}
-                >
-                  {b.status.toUpperCase()}
-                </span>
-                <button
-                  onClick={() => toggleBooking(b._id)}
-                  className={`px-4 py-2 rounded-lg text-white font-semibold shadow-md transition-all duration-300
+                        ? 'bg-green-200 text-green-700'
+                        : 'bg-yellow-200 text-yellow-700'}`}
+                  >
+                    {b.status.toUpperCase()}
+                  </span>
+                  {tab === "active" && (
+
+                    <button
+                      onClick={() => toggleBooking(b.id)}
+                      className={`px-4 py-2 rounded-lg text-white font-semibold shadow-md transition-all duration-300
                     ${b.status === 'cancelled'
-                      ? 'bg-green-600 hover:bg-green-700'
-                      : 'bg-red-600 hover:bg-red-700'}`}
-                >
-                  {b.status === 'cancelled' ? 'Reconfirm' : 'Cancel'}
-                </button>
+                          ? 'bg-green-600 hover:bg-green-700'
+                          : 'bg-red-600 hover:bg-red-700'}`}
+                    >
+                      {b.status === 'cancelled' ? 'Reconfirm' : 'Cancel'}
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   )

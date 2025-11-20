@@ -79,6 +79,9 @@ const login = async (req, res) => {
         if (!passwordMatch) {
             return res.status(400).json({ success: false, message: "Not a valid password" })
         }
+        if (userExist.status === 'blocked') {
+            return res.status(403).json({ success: false, message: 'Your account has been blocked. Contact support.', });
+        }
 
 
         const token = createToken(userExist._id, userExist.role);

@@ -29,7 +29,7 @@ export default function UserProtectLayout() {
             })
             .catch((err) => {
                 dispatch(clearUserData());
-                toast.error('Login to access');
+                toast.error(err?.response?.data?.message ||'Login to access');
                 setLoading(false);
                 navigate('/login');
             });

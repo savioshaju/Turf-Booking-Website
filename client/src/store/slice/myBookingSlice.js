@@ -3,7 +3,10 @@ import { createSlice } from '@reduxjs/toolkit'
 const myBookingSlice = createSlice({
   name: 'myBookings',
   initialState: {
-    myBookings: []
+    myBookings: {
+      active: [],
+      past: []
+    }
   },
   reducers: {
     setMyBookings: (state, action) => {
@@ -11,11 +14,19 @@ const myBookingSlice = createSlice({
     },
     updateBookingStatus: (state, action) => {
       const updated = action.payload
-      const index = state.myBookings.findIndex(b => b._id === updated._id)
-      if (index !== -1) state.myBookings[index] = updated
+      const activeIndex = state.myBookings.active.findIndex(b => b.id === updated.id)
+      if (activeIndex !== -1) {
+        state.myBookings.active[activeIndex] = updated
+        return
+      }
+      const pastIndex = state.myBookings.past.findIndex(b => b.id === updated.id)
+      if (pastIndex !== -1) {
+        state.myBookings.past[pastIndex] = updated
+        return
+      }
     },
     clearMyBookings: (state) => {
-      state.myBookings = []
+      state.myBookings = { active: [], past: [] }
     }
   }
 })

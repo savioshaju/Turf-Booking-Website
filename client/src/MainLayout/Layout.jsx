@@ -17,11 +17,11 @@ const Layout = () => {
 
 
   useEffect(() => {
-    if (userData) {
+    if (!userData) {
+      checkUser();
+    } else {
       setLoading(false);
-      return;
     }
-    checkUser();
   }, []);
 
   function checkUser() {
@@ -30,12 +30,13 @@ const Layout = () => {
         dispatch(saveUserData(res.data.data));
         setLoading(false);
       })
-      .catch((err) => {
+      .catch(() => {
         dispatch(clearUserData());
+      })
+      .finally(() => {
         setLoading(false);
       });
   }
-
 
   const mainClasses = location.pathname === '/'
     ? 'min-h-[50vh] '

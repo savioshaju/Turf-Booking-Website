@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/userModel');
 
-const authAdmin = (req, res, next) => {
+const authAdmin = async (req, res, next) => {
     try {
         const { token } = req.cookies;
 
@@ -17,6 +18,14 @@ const authAdmin = (req, res, next) => {
 
         if (decoded.role !== 'admin') {
             return res.status(403).json({ success: false, message: 'Admin access required.' });
+        }
+        const user = await User.findById(decoded.id).select('status name role');
+        if (!user) {
+            return res.status(401).json({ success: false, message: 'User not found.' });
+        }
+
+        if (user.status === 'blocked') {
+            return res.status(403).json({ success: false, message: 'Your account has been blocked. Contact support.', });
         }
 
         req.user = decoded;

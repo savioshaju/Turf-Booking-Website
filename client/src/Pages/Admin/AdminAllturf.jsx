@@ -20,10 +20,6 @@ const AdminAllturf = () => {
             .then(res => {
                 setTurfs(res.data.data)
             })
-            .catch((err) => {
-
-                toast.error(err?.response?.data?.message || 'Failed to fetch turfs')
-            })
             .finally(() => setLoading(false))
     }
 
