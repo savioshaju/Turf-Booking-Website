@@ -40,8 +40,7 @@ function BookTurf() {
 
     const fetchSlots = async (selectedDate) => {
         if (!id || !selectedDate) return
-        setLoading(true)
-
+       
         axiosInstance({
             method: 'POST',
             url: `/booking/free-slots/${id}`,

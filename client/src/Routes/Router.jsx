@@ -18,6 +18,7 @@ import ProfilePage from "../Pages/User/ProfilePage";
 import Users from "../Pages/Admin/Users";
 import About from "../Pages/Shared/About";
 import Contact from "../Pages/Shared/Contact";
+import Group from "../Pages/User/Group";
 
 const router = createBrowserRouter([
     {
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
                     {
                         path: 'profile',
                         element: <ProfilePage />
+                    },
+                    {
+                        path: 'groups',
+                        element: <Group/>
                     }
                 ]
             }

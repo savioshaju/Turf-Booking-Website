@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const { json } = require('express')
 const jwt = require('jsonwebtoken')
 const createToken = require('../utils/generateToken.js')
+const { autoDeleteExpiredGroups } = require('./groupController.js')
 
 const signup = async (req, res) => {
 
@@ -33,9 +34,14 @@ const signup = async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'PRODUCTION',
-            sameSite: 'none',
+            sameSite: process.env.NODE_ENV === 'PRODUCTION' ? 'none' : 'lax',
             maxAge: 2 * 24 * 60 * 60 * 1000
         });
+
+        autoDeleteExpiredGroups(
+            {},
+            { status: () => ({ json: () => { } }) }
+        );
 
         const { password: _, ...userData } = savedUser.toObject();
         res.status(201).json({ success: true, message: "User registered successfully", data: userData });
@@ -89,7 +95,7 @@ const login = async (req, res) => {
         res.cookie('token', token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'PRODUCTION',
-            sameSite: 'none',
+            sameSite: process.env.NODE_ENV === 'PRODUCTION' ? 'none' : 'lax',
             maxAge: 2 * 24 * 60 * 60 * 1000
         });
 
@@ -332,8 +338,8 @@ const logout = async (req, res) => {
         res.clearCookie("token", {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'PRODUCTION',
-            sameSite: 'none',
-            path: '/', 
+            sameSite: process.env.NODE_ENV === 'PRODUCTION' ? 'none' : 'lax',
+            path: '/',
         })
         res.status(200).json({ success: true, message: 'User Logout successfully.' });
     } catch (error) {

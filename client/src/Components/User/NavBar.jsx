@@ -2,6 +2,7 @@ import React from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
+import { Users } from 'lucide-react';
 
 function NavBar() {
   const location = useLocation();
@@ -45,6 +46,14 @@ function NavBar() {
         </svg>
       ),
       tooltip: 'My Bookings'
+    },
+    {
+      path: '/user/groups',
+      label: 'Groups',
+      icon: (
+        <Users />
+      ),
+      tooltip: 'Groups'
     },
     {
       path: '/user/profile',
@@ -93,18 +102,16 @@ function NavBar() {
                 <Link
                   to={item.path}
                   className={`
-                  ${userData?.email && item.label === 'Login' ? 'hidden' : ''} 
-                  ${(!userData?.email && (item.isEmail || item.label === 'Bookings')) ? 'hidden' : ''} 
-                  px-4 py-3 lg:px-5 lg:py-3 rounded-xl transition-all duration-500 flex items-center justify-center
-                  ${activeNav === item.path
+                      ${userData?.email && item.label === 'Login' ? 'hidden' : ''}
+                      ${(!userData?.email && (item.isEmail || item.label === 'Bookings' || item.label === 'Groups')) ? 'hidden' : ''} 
+                      px-4 py-3 lg:px-5 lg:py-3 rounded-xl transition-all duration-500 flex items-center justify-center
+                      ${activeNav === item.path
                       ? 'text-green-600 shadow-2xl ring-2 ring-green-400 ring-opacity-80 transform scale-110'
                       : !isHome
                         ? 'text-gray-800 hover:text-green-600 hover:shadow-lg hover:ring-2 hover:ring-green-300'
                         : 'text-white/90 hover:text-green-300 hover:shadow-lg hover:ring-2 hover:ring-green-100'
-                    }
-                  `}
-                  onClick={() => setActiveNav(item.path)}
-                >
+                    }`} onClick={() => setActiveNav(item.path)}>
+
                   {item.isEmail ? (
                     <>
 
