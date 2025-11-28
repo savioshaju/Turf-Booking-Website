@@ -36,7 +36,7 @@ function GroupList({
   return (
     <div className="bg-white rounded-xl border border-gray-200 h-[80vh] flex flex-col">
 
-      <div className="flex border-b border-gray-200 px-6">
+      <div className="flex border-b border-gray-200 px-6 overflow-x-auto no-scrollbar whitespace-nowrap">
         {tabs.map(({ id, label, count }) => (
           <button
             key={id}

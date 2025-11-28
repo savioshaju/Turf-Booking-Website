@@ -1,26 +1,29 @@
-import React, { useEffect, useState, useCallback } from "react"  
-import { useSelector } from "react-redux"  
-import axiosInstance from "../../Config/axiosInstance"  
-import GroupDetails from "../../Components/User/GroupDetails"  
-import GroupList from "../../Components/User/GroupList"  
+import React, { useEffect, useState, useCallback } from "react"
+import { useSelector } from "react-redux"
+import axiosInstance from "../../Config/axiosInstance"
+import GroupDetails from "../../Components/User/GroupDetails"
+import GroupList from "../../Components/User/GroupList"
 
 export default function Group() {
-  const user = useSelector((state) => state.user.userData)  
-  const userId = user?._id  
+  const user = useSelector((state) => state.user.userData)
+  const userId = user?._id
 
-  const [myCreated, setMyCreated] = useState([])  
-  const [myJoined, setMyJoined] = useState([])  
+  const [myCreated, setMyCreated] = useState([])
+  const [myJoined, setMyJoined] = useState([])
 
 
-  const [applied, setApplied] = useState([])  
-  const [discover, setDiscover] = useState([])  
+  const [applied, setApplied] = useState([])
+  const [discover, setDiscover] = useState([])
 
-  const [selectedGroup, setSelectedGroup] = useState(null)  
-  const [activeTab, setActiveTab] = useState("members")  
-  const [requests, setRequests] = useState([])  
+  const [selectedGroup, setSelectedGroup] = useState(null)
+  const [activeTab, setActiveTab] = useState("members")
+  const [requests, setRequests] = useState([])
 
-  const [loadingList, setLoadingList] = useState(true)  
-  const [loadingDetails, setLoadingDetails] = useState(false)  
+  const [loadingList, setLoadingList] = useState(true)
+  const [loadingDetails, setLoadingDetails] = useState(false)
+
+  const [showDetailsMobile, setShowDetailsMobile] = useState(false);
+
 
   const loadCreated = useCallback(() => {
     axiosInstance({
@@ -109,7 +112,26 @@ export default function Group() {
   const handleSelect = (g) => {
     setActiveTab("members")
     loadGroupDetails(g._id)
+
+    if (window.innerWidth < 1024) {
+      setShowDetailsMobile(true);
+      window.history.pushState({ group: g._id }, "group-details");
+    }
   }
+
+  useEffect(() => {
+    const handlePop = () => {
+      if (window.innerWidth < 1024) {
+        setShowDetailsMobile(false);
+        setSelectedGroup(null);
+      }
+    };
+
+    window.addEventListener("popstate", handlePop);
+    return () => window.removeEventListener("popstate", handlePop);
+  }, []);
+
+
 
   const handleDecision = async (requestId, status) => {
     axiosInstance({
@@ -155,14 +177,15 @@ export default function Group() {
       })
   }
 
-  const myGroups = myCreated  
+  const myGroups = myCreated
 
 
   const isOwner = selectedGroup?.ownerId?._id === userId
 
   return (
     <div className="pt-20 p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-1">
+      <div
+        className={` ${showDetailsMobile ? "hidden" : "block"} lg:block lg:col-span-1`}>
         {loadingList ? (
           <div className="flex justify-center items-center h-40">
             <span className="loading loading-spinner w-10 h-10 text-primary" />
@@ -177,24 +200,24 @@ export default function Group() {
         )}
       </div>
 
-      <div className="lg:col-span-2">
-        {loadingDetails ? (
-          <div className="bg-white p-6 rounded shadow h-[80vh] flex justify-center items-center">
-            <span className="loading loading-spinner w-10 h-10 text-primary"></span>
-          </div>
-        ) : (
-          <GroupDetails
-            group={selectedGroup}
-            activeTab={activeTab}
-            setActiveTab={setActiveTab}
-            requests={requests}
-            isOwner={isOwner}
-            onDecision={handleDecision}
-            onLeave={handleLeave}
-            onRemovePlayer={handleRemovePlayer}
-          />
-        )}
-      </div>
+      <div className={` ${showDetailsMobile ? "block" : "hidden"}  lg:block lg:col-span-2 `}>
+      {loadingDetails ? (
+        <div className="bg-white p-6 rounded shadow h-[80vh] flex justify-center items-center">
+          <span className="loading loading-spinner w-10 h-10 text-primary"></span>
+        </div>
+      ) : (
+        <GroupDetails
+          group={selectedGroup}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          requests={requests}
+          isOwner={isOwner}
+          onDecision={handleDecision}
+          onLeave={handleLeave}
+          onRemovePlayer={handleRemovePlayer}
+        />
+      )}
     </div>
+    </div >
   )
 }

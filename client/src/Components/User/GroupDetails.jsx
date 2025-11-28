@@ -1,19 +1,19 @@
-import React from "react"  
-import { Users, Calendar, MapPin, Clock, MessageSquare, User,Mail,Phone,X,LogOut,CheckCircle,XCircle,MoreHorizontal} from "lucide-react"  
+import React from "react"
+import { Users, Calendar, MapPin, Clock, MessageSquare, User, Mail, Phone, X, LogOut, CheckCircle, XCircle, MoreHorizontal } from "lucide-react"
 
 function formatSlots(slotStr) {
-  if (!slotStr) return []  
+  if (!slotStr) return []
 
-  const slots = slotStr.split(",").map(Number)  
+  const slots = slotStr.split(",").map(Number)
 
   return slots.map((s) => {
-    const startH = (s - 1) % 12 || 12  
-    const endH = s % 12 || 12  
-    const startP = s - 1 < 12 ? "AM" : "PM"  
-    const endP = s < 12 ? "AM" : "PM"  
+    const startH = (s - 1) % 12 || 12
+    const endH = s % 12 || 12
+    const startP = s - 1 < 12 ? "AM" : "PM"
+    const endP = s < 12 ? "AM" : "PM"
 
-    return `${startH}:00 ${startP} - ${endH}:00 ${endP}`  
-  })  
+    return `${startH}:00 ${startP} - ${endH}:00 ${endP}`
+  })
 }
 
 function StatusBadge({ status }) {
@@ -22,30 +22,29 @@ function StatusBadge({ status }) {
     pending: { color: "bg-yellow-100 text-yellow-800 border-yellow-200", label: "Pending" },
     full: { color: "bg-blue-100 text-blue-800 border-blue-200", label: "Full" },
     cancelled: { color: "bg-red-100 text-red-800 border-red-200", label: "Cancelled" }
-  }  
+  }
 
-  const config = statusConfig[status] || statusConfig.active  
+  const config = statusConfig[status] || statusConfig.active
 
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${config.color}`}>
       {config.label}
     </span>
-  )  
+  )
 }
 
 function PlayerCountBadge({ current, required }) {
-  const isFull = current >= required  
-  
+  const isFull = current >= required
+
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-      isFull 
-        ? "bg-purple-100 text-purple-800 border-purple-200" 
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${isFull
+        ? "bg-purple-100 text-purple-800 border-purple-200"
         : "bg-orange-100 text-orange-800 border-orange-200"
-    }`}>
+      }`}>
       <Users className="w-3 h-3 mr-1" />
       {current}/{required}
     </span>
-  )  
+  )
 }
 
 function GroupDetails({
@@ -65,21 +64,21 @@ function GroupDetails({
         <p className="text-lg font-medium">Select a group to view details</p>
         <p className="text-sm text-gray-400 mt-1">Choose a group from the list to get started</p>
       </div>
-    )  
+    )
   }
 
-  const booking = group.bookingId || {}  
-  const turf = booking.turfId || {}  
-  const slotTimes = formatSlots(booking.Slot)  
-  const currentPlayers = group.players?.length || 0  
-  const requiredPlayers = group.requiredPlayers || 0  
+  const booking = group.bookingId || {}
+  const turf = booking.turfId || {}
+  const slotTimes = formatSlots(booking.Slot)
+  const currentPlayers = group.players?.length || 0
+  const requiredPlayers = group.requiredPlayers || 0
 
   const tabs = [
     { id: "members", icon: Users, label: "Members" },
     { id: "details", icon: Calendar, label: "Details" },
     ...(isOwner ? [{ id: "requests", icon: MessageSquare, label: "Requests" }] : []),
     { id: "chat", icon: MessageSquare, label: "Chat" }
-  ]  
+  ]
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 flex flex-col h-full overflow-hidden">
@@ -92,7 +91,7 @@ function GroupDetails({
             <PlayerCountBadge current={currentPlayers} required={requiredPlayers} />
           </div>
         </div>
-        
+
         <div className="flex items-center  text-sm text-gray-600">
           <span className="font-medium">{group.ownerId?.email}</span>
           <span className="mx-2">  </span>
@@ -100,16 +99,16 @@ function GroupDetails({
         </div>
       </div>
 
-      <div className="flex border-b bg-green-200 border-gray-200 px-6">
+      <div className="flex border-b bg-green-200 border-gray-200 px-6 overflow-x-auto no-scrollbar whitespace-nowrap">
+
         {tabs.map(({ id, icon: Icon, label }) => (
           <button
             key={id}
             onClick={() => setActiveTab(id)}
-            className={`flex items-center gap-2 px-4 py-3 font-semibold border-b-2 transition-colors ${
-              activeTab === id
+            className={`flex items-center gap-2 px-4 py-3 font-semibold border-b-2 transition-colors ${activeTab === id
                 ? "text-green-700 border-green-600"
                 : "text-gray-500 border-transparent hover:text-gray-700"
-            }`}
+              }`}
           >
             <Icon className="w-4 h-4" />
             {label}
@@ -213,13 +212,13 @@ function GroupDetails({
                   <Calendar className="w-4 h-4" />
                   Booking Information
                 </h4>
-                
+
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <MapPin className="w-4 h-4 text-gray-400" />
                     <div>
                       <p className="font-medium text-gray-900">{turf.name}</p>
-                      <p className="text-sm text-gray-500">{turf.location }</p>
+                      <p className="text-sm text-gray-500">{turf.location}</p>
                     </div>
                   </div>
 
@@ -331,7 +330,7 @@ function GroupDetails({
 
       </div>
     </div>
-  )  
+  )
 }
 
 export default GroupDetails;
