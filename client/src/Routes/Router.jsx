@@ -19,11 +19,13 @@ import Users from "../Pages/Admin/Users";
 import About from "../Pages/Shared/About";
 import Contact from "../Pages/Shared/Contact";
 import Group from "../Pages/User/Group";
+import Error from "../Pages/Shared/Error";
 
 const router = createBrowserRouter([
     {
         path: '/',
         element: <Layout />,
+        errorElement: <Error />,
         children: [
             {
                 path: '/',
@@ -47,11 +49,11 @@ const router = createBrowserRouter([
             },
             {
                 path: 'contact',
-                element: <Contact/>
+                element: <Contact />
             },
             {
                 path: 'about',
-                element: <About/>
+                element: <About />
             },
             {
                 path: 'user',
@@ -75,7 +77,7 @@ const router = createBrowserRouter([
                     },
                     {
                         path: 'groups',
-                        element: <Group/>
+                        element: <Group />
                     }
                 ]
             }
@@ -103,11 +105,11 @@ const router = createBrowserRouter([
                     },
                     {
                         path: 'turf-details/:id',
-                        element: <AdminTurfDetails/>
+                        element: <AdminTurfDetails />
                     },
                     {
                         path: 'users',
-                        element: <Users/>
+                        element: <Users />
                     }
                 ]
             }
