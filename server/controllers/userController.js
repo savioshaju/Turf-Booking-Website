@@ -38,10 +38,6 @@ const signup = async (req, res) => {
             maxAge: 2 * 24 * 60 * 60 * 1000
         });
 
-        autoDeleteExpiredGroups(
-            {},
-            { status: () => ({ json: () => { } }) }
-        );
 
         const { password: _, ...userData } = savedUser.toObject();
         res.status(201).json({ success: true, message: "User registered successfully", data: userData });
@@ -88,6 +84,8 @@ const login = async (req, res) => {
         if (userExist.status === 'blocked') {
             return res.status(403).json({ success: false, message: 'Your account has been blocked. Contact support.', });
         }
+
+        await autoDeleteExpiredGroups();
 
 
         const token = createToken(userExist._id, userExist.role);

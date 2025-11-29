@@ -2,6 +2,7 @@ const Group = require('../models/groupModel')
 const GroupRequest = require('../models/groupRequestModel')
 const Booking = require('../models/bookingModel')
 const User = require('../models/userModel')
+const cleanupTracker = require('../utils/cleanupTracker')
 
 const createGroup = async (req, res) => {
     try {
@@ -263,22 +264,38 @@ const getMyJoinedGroups = async (req, res) => {
     }
 }
 
-const autoDeleteExpiredGroups = async (req, res) => {
-    try {
-        const today = new Date()
+const autoDeleteExpiredGroups = async () => {
+  try {
+    const today = new Date();
+    today.setUTCHours(0, 0, 0, 0);
 
-        const bookings = await Booking.find({ date: { $lt: today } })
-        const bookingIds = bookings.map(b => b._id)
-
-        await Group.deleteMany({ bookingId: { $in: bookingIds } })
-        await GroupRequest.deleteMany({ groupId: { $in: bookingIds } })
-
-        res.status(200).json({ success: true, message: "Expired groups deleted" })
-    } catch (error) {
-        console.error('Auto Delete Groups Error:', error)
-        res.status(500).json({ success: false, message: 'Auto Delete Groups: Server error' })
+    if (cleanupTracker.lastCleanupDate && cleanupTracker.lastCleanupDate.getTime() === today.getTime()) {
+      return;
     }
-}
+
+    const expiredBookings = await Booking.find({ date: { $lt: today } }).select('_id');
+    if (!expiredBookings || expiredBookings.length === 0) {
+      cleanupTracker.lastCleanupDate = today;
+      return;
+    }
+
+    const bookingIds = expiredBookings.map(b => b._id);
+    const expiredGroups = await Group.find({ bookingId: { $in: bookingIds } }).select('_id');
+    const groupIds = expiredGroups.map(g => g._id);
+
+    if (groupIds.length > 0) {
+      await Group.deleteMany({ _id: { $in: groupIds } });
+      await GroupRequest.deleteMany({ groupId: { $in: groupIds } });
+    }
+
+    cleanupTracker.lastCleanupDate = today;
+
+    console.log(`Auto-cleanup executed → Bookings: ${bookingIds.length}, Groups: ${groupIds.length}`);
+  } catch (err) {
+    console.error('Auto-cleanup error:', err);
+  }
+};
+
 
 const getAllGroups = async (req, res) => {
     try {
