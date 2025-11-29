@@ -38,8 +38,8 @@ function PlayerCountBadge({ current, required }) {
 
   return (
     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${isFull
-        ? "bg-purple-100 text-purple-800 border-purple-200"
-        : "bg-orange-100 text-orange-800 border-orange-200"
+      ? "bg-purple-100 text-purple-800 border-purple-200"
+      : "bg-orange-100 text-orange-800 border-orange-200"
       }`}>
       <Users className="w-3 h-3 mr-1" />
       {current}/{required}
@@ -106,8 +106,8 @@ function GroupDetails({
             key={id}
             onClick={() => setActiveTab(id)}
             className={`flex items-center gap-2 px-4 py-3 font-semibold border-b-2 transition-colors ${activeTab === id
-                ? "text-green-700 border-green-600"
-                : "text-gray-500 border-transparent hover:text-gray-700"
+              ? "text-green-700 border-green-600"
+              : "text-gray-500 border-transparent hover:text-gray-700"
               }`}
           >
             <Icon className="w-4 h-4" />
@@ -271,7 +271,7 @@ function GroupDetails({
                     key={request._id}
                     className="p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors"
                   >
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col items-start md:flex-row gap-2 md:items-center md:justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-red-600 rounded-full flex items-center justify-center text-white font-semibold">
                           {request.requesterId?.name?.charAt(0).toUpperCase() || <User className="w-5 h-5" />}
@@ -294,13 +294,14 @@ function GroupDetails({
                       </div>
 
                       {request.status === "pending" ? (
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 ps-5">
                           <button
                             onClick={() => onDecision(request._id, "approved")}
                             className="flex items-center gap-2 px-3 py-2 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100 transition-colors text-sm font-medium"
                           >
                             <CheckCircle className="w-4 h-4" />
                             Approve
+
                           </button>
                           <button
                             onClick={() => onDecision(request._id, "rejected")}
