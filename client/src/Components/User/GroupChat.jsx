@@ -115,9 +115,9 @@ function GroupChat({ groupId }) {
                 {messages.map((msg) => (
                     <div
                         key={msg._id}
-                        className={`max-w-xs px-2 py-2 rounded-lg text-sm ${msg.senderId?._id === userId
-                            ? "bg-green-200 text-gray-800 ml-auto"
-                            : "bg-white text-gray-700 border mr-auto"
+                        className={`max-w-xs px-3 py-2  text-sm ${msg.senderId?._id === userId
+                            ? "bg-green-200 text-gray-800 ml-auto  rounded-bl-3xl rounded-tr-3xl rounded-tl-3xl"
+                            : "bg-gray-100 text-gray-700 border mr-auto rounded-br-3xl rounded-tl-3xl  rounded-tr-3xl"
                             }`}
                     >
                         <p className="font-semibold">{msg.senderId?.name || "User"}</p>

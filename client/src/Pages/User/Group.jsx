@@ -127,7 +127,7 @@ export default function Group() {
     if (!groupId) return
 
     setLoadingDetails(true)
-    toast.promise(
+    toast(
       axiosInstance({
         method: "GET",
         url: `/group/details/${groupId}`
