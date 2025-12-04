@@ -7,47 +7,31 @@ const cors = require('cors');
 
 const app = express();
 
-/* ---------------------- CORS CONFIG ---------------------- */
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow server-to-server, Postman, ThunderClient
-    if (!origin) return callback(null, true);
-
-    const allowedOrigins = [
-      'http://localhost:5173',
-      'http://127.0.0.1:5173',
-      'http://localhost:3000',
-      'http://127.0.0.1:3000'
-    ];
-
-    // Check local dev domains OR hosted domains
-    if (
-      allowedOrigins.includes(origin) ||
-      /\.vercel\.app$/.test(origin) ||
-      /\.onrender\.com$/.test(origin)
-    ) {
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); 
+    if (/\.vercel\.app$/.test(origin)) {
       console.log(`CORS allowed for origin: ${origin}`);
       return callback(null, true);
     }
-
-    console.log(`CORS blocked for origin: ${origin}`);
-    return callback(new Error('Not allowed by CORS'));
+    callback(new Error('Not allowed by CORS'));
   },
   credentials: true,
 };
 
+// Middlewares
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-/* ---------------------- DATABASE ---------------------- */
+// Database
 connectDB();
 
-/* ---------------------- ROUTES ------------------------ */
+// Routes
 app.use('/api', router);
 
-/* ---------------------- START SERVER ------------------ */
+// Start server
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
