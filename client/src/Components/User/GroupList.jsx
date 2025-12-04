@@ -30,7 +30,6 @@ function GroupList({
   } else if (tab === "applied") {
     list = applied.map(g => ({...g, _type: "applied"}))  
   }
-  console.log(list)
 
 
   return (
@@ -76,7 +75,7 @@ function GroupList({
               const isClickable = !isApplied  
               
               const playerCount = g.players?.length || 0  
-              const requiredPlayers = g.requiredPlayers || 0  
+              const requiredPlayers = g.requiredPlayers + playerCount || 0  
               const turfName = g.bookingId?.turfId?.name   
 
               const borderColor = isMyGroup ? 'border-l-green-400' : 

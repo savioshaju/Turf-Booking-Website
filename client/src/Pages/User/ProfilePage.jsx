@@ -4,7 +4,7 @@ import { toast } from 'react-toastify'
 import { useNavigate } from 'react-router-dom'
 import { useDispatch } from 'react-redux';
 import { clearUserData, saveUserData } from '../..//store/slice/userSlice';
-import { User, Mail, Phone, Edit2, Save, X, LogOut, Trash2, Shield, Check, X as XIcon } from 'lucide-react'
+import { User, Mail, Phone, Edit2, Save, X, LogOut, Trash2, Shield, Check, X as XIcon, Eye, EyeOff } from 'lucide-react'
 import { clearMyBookings } from '../../store/slice/myBookingSlice';
 const ProfilePage = () => {
     const navigate = useNavigate()
@@ -14,7 +14,8 @@ const ProfilePage = () => {
         name: '',
         email: '',
         phone: '',
-        role: ''
+        role: '',
+        visibility: 'private'
     })
 
 
@@ -24,7 +25,8 @@ const ProfilePage = () => {
         email: '',
         phone: '',
         password: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        visibility: 'private'
     })
     const [formErrors, setFormErrors] = useState({})
     const [isSubmitting, setIsSubmitting] = useState(false)
@@ -53,16 +55,19 @@ const ProfilePage = () => {
                     name: user.name || '',
                     email: user.email || '',
                     phone: user.phone || '',
-                    role: user.role || ''
-                })
+                    role: user.role || '',
+                    visibility: user.visibility || 'private'
+                });
 
                 setFormData({
                     name: user.name || '',
                     email: user.email || '',
                     phone: user.phone || '',
                     password: '',
-                    confirmPassword: ''
-                })
+                    confirmPassword: '',
+                    visibility: user.visibility || 'private'
+                });
+
             })
             .catch(err => console.error(err))
     }, [])
@@ -199,6 +204,30 @@ const ProfilePage = () => {
         }
     }
 
+    const toggleVisibility = () => {
+        const newVisibility = userData.visibility === "private" ? "public" : "private";
+
+        toast.promise(
+            axiosInstance({
+                method: "PUT",
+                url: "/user/update",
+                data: { visibility: newVisibility }
+            }),
+            {
+                pending: "Updating...",
+                success: "Visibility updated",
+                error: "Failed to update visibility"
+            }
+        )
+            .then(() => {
+                setUserData(prev => ({
+                    ...prev,
+                    visibility: newVisibility
+                }));
+            });
+    };
+
+
 
     const getClassName = field => `w-full p-3 border rounded-xl focus:outline-none focus:border-green-500 
     ${formErrors[field] ? 'border-red-500' : 'border-gray-300'}`
@@ -234,10 +263,13 @@ const ProfilePage = () => {
                                     {userData.email}
                                 </p>
                                 {userData.role === 'admin' && (
-                                    <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full capitalize mt-1 inline-block">
+                                    <span className="px-2 py-1 bg-blue-100 text-blue-800 border-x-blue-400 text-xs rounded-full capitalize mt-1 inline-block">
                                         {userData.role}
                                     </span>
                                 )}
+                                <span className="px-2 py-1 mx-2 bg-yellow-100 text-yellow-800 border border-yellow-400 text-xs rounded-full capitalize mt-1 inline-block">
+                                    {userData.visibility}
+                                </span>
                             </div>
                         </div>
 
@@ -286,6 +318,40 @@ const ProfilePage = () => {
                                 <User size={20} />
                                 Personal Information
                             </h2>
+                            <div className='py-4'>
+                                <div className="flex items-center justify-between  ">
+                                    <div className="flex items-center gap-3">
+                                        <div className='rounded-full text-black'>
+                                            {userData.visibility === 'public' ? <Eye size={18} /> : <EyeOff size={18} />}
+                                        </div>
+                                        <div>
+                                            <p className="font-semibold text-gray-800">
+                                                {userData.visibility === 'public' ? 'Profile is Public' : 'Profile is Private'}
+                                            </p>
+                                            <p className="text-sm text-gray-600 mt-0.5">
+                                                {userData.visibility === 'public'
+                                                    ? 'Others can view your profile'
+                                                    : 'Your profile is hidden'}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <button
+                                        onClick={toggleVisibility}
+                                        className="group relative w-16 h-8 flex items-center border-0 outline-none focus:outline-none focus:ring-0 focus:ring-transparent">
+                                        <div className={`w-full h-full rounded-full transition-all duration-300 ${userData.visibility === 'public'
+                                            ? 'bg-green-500'
+                                            : 'bg-gray-200'} focus:outline-none`}>
+
+                                        </div>
+                                        <div className={`absolute left-1 w-6 h-6 rounded-full bg-white shadow-lg transform transition-transform duration-300 group-hover:scale-110 ${userData.visibility === 'public'
+                                            ? 'translate-x-8 bg-green-500'
+                                            : 'translate-x-0 bg-gray-600'} focus:outline-none`}>
+
+                                        </div>
+                                    </button>
+                                </div>
+                            </div>
 
                             {!isEditing ? (
                                 <div className="space-y-4">
@@ -445,7 +511,7 @@ const ProfilePage = () => {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     )
 }
 

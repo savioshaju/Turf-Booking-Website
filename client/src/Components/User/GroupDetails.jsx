@@ -1,5 +1,6 @@
 import React from "react"
-import { Users, Calendar, MapPin, Clock, MessageSquare, User, Mail, Phone, X, LogOut, CheckCircle, XCircle, MoreHorizontal } from "lucide-react"
+import { Users, Calendar, MapPin, Clock, MessageSquare, User, Mail, Phone, X, LogOut, CheckCircle, XCircle, MoreHorizontal ,Crown} from "lucide-react"
+import GroupChat from "./GroupChat"
 
 function formatSlots(slotStr) {
   if (!slotStr) return []
@@ -71,17 +72,17 @@ function GroupDetails({
   const turf = booking.turfId || {}
   const slotTimes = formatSlots(booking.Slot)
   const currentPlayers = group.players?.length || 0
-  const requiredPlayers = group.requiredPlayers || 0
+  const requiredPlayers = group.requiredPlayers + currentPlayers || 0
 
   const tabs = [
+    { id: "chat", icon: MessageSquare, label: "Chat" },
     { id: "members", icon: Users, label: "Members" },
     { id: "details", icon: Calendar, label: "Details" },
-    ...(isOwner ? [{ id: "requests", icon: MessageSquare, label: "Requests" }] : []),
-    { id: "chat", icon: MessageSquare, label: "Chat" }
+    ...(isOwner ? [{ id: "requests", icon: MessageSquare, label: "Requests" }] : [])
   ]
 
   return (
-    <div className="bg-white rounded-xl border border-gray-200 flex flex-col h-full overflow-hidden">
+    <div className="bg-white rounded-xl border border-gray-200 flex flex-col h-[80vh] overflow-hidden">
 
       <div className="p-6  bg-green-200">
         <div className="flex justify-between items-start mb-3">
@@ -117,7 +118,9 @@ function GroupDetails({
       </div>
 
       <div className="flex-1 overflow-y-auto p-6">
-
+        {activeTab === "chat" && (
+          <GroupChat groupId={group._id} />
+        )}
         {activeTab === "members" && (
           <div>
             <div className="flex justify-between items-center mb-4">
@@ -152,13 +155,13 @@ function GroupDetails({
                             <Crown className="w-4 h-4 text-yellow-500" />
                           )}
                         </div>
-                        <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                        <div className="flex flex-col md:flex-row items-start gap-4 text-xs text-gray-500 mt-1">
                           <span className="flex items-center gap-1">
                             <Mail className="w-3 h-3" />
                             {player.email}
                           </span>
                           {player.phone && (
-                            <span className="flex items-center gap-1">
+                            <span className="flex items-center  gap-1">
                               <Phone className="w-3 h-3" />
                               {player.phone}
                             </span>
@@ -236,9 +239,9 @@ function GroupDetails({
                       <Clock className="w-4 h-4 text-gray-400 mt-0.5" />
                       <div>
                         <p className="font-medium text-gray-900 mb-2">Time Slots</p>
-                        <div className="space-y-1">
+                        <div className="gap-2 grid grid-cols-2 md:grid-cols-4 overflow-y-auto max-h-20">
                           {slotTimes.map((time, index) => (
-                            <div key={index} className="text-sm text-gray-600 bg-gray-50 px-3 py-2 rounded border">
+                            <div key={index} className="text-sm text-gray-600 bg-gray-50 px-1 py-2 rounded border">
                               {time}
                             </div>
                           ))}
@@ -278,7 +281,7 @@ function GroupDetails({
                         </div>
                         <div>
                           <p className="font-medium text-gray-900">{request.requesterId?.name}</p>
-                          <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
+                          <div className="flex flex-col md:flex-row items-start gap-4 text-xs text-gray-500 mt-1">
                             <span className="flex items-center gap-1">
                               <Mail className="w-3 h-3" />
                               {request.requesterId?.email}
@@ -321,14 +324,6 @@ function GroupDetails({
             )}
           </div>
         )}
-
-        {activeTab === "chat" && (
-          <div className="text-center py-12 text-gray-500">
-            <MessageSquare className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-            <h4 className="font-semibold text-lg text-gray-600 mb-2">Chat Feature Coming Soon</h4>
-          </div>
-        )}
-
       </div>
     </div>
   )

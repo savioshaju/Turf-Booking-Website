@@ -28,6 +28,15 @@ const userSchema = new mongoose.Schema({
         enum: ['active', 'blocked'],
         default: 'active'
     },
+    visibility: {
+        type: String,
+        enum: ['public', 'private'],
+        default: 'private'
+    },
+    likes: {
+        type: [String],
+        default: []
+    },
     phone: {
         type: String,
         required: [true, 'Phone number is required'],

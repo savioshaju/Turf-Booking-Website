@@ -20,10 +20,10 @@ function Home() {
     fetchAllGroups()
   }, [])
 
-  const [expanded, setExpanded] = useState(null)  
+  const [expanded, setExpanded] = useState(null)
 
   function toggleExpand(id) {
-    setExpanded(prev => (prev === id ? null : id))  
+    setExpanded(prev => (prev === id ? null : id))
   }
 
   function fetchAllGroups() {
@@ -55,6 +55,21 @@ function Home() {
         }),
       { pending: "Applying..." }
     )
+  }
+
+  function formatSlots(slotStr) {
+    if (!slotStr) return []
+
+    const slots = slotStr.split(",").map(Number)
+
+    return slots.map((s) => {
+      const startH = (s - 1) % 12 || 12
+      const endH = s % 12 || 12
+      const startP = s - 1 < 12 ? "AM" : "PM"
+      const endP = s < 12 ? "AM" : "PM"
+
+      return `${startH}:00 ${startP} - ${endH}:00 ${endP}`
+    })
   }
 
   function scrollGroups(direction) {
@@ -148,9 +163,18 @@ function Home() {
                         <span><strong>Date:</strong> {new Date(g.bookingId?.date).toLocaleDateString()}</span>
                       </div>
 
-                      <div className="flex items-center gap-2 text-sm text-gray-700">
+                      <div className="flex items-start gap-3">
                         <Clock size={16} className="text-green-600" />
-                        <span><strong>Time:</strong> {g.bookingId?.Slot}</span>
+                        <div>
+                          <p className="font-medium text-gray-900 mb-2">Time Slots</p>
+                          <div className="gap-2 grid grid-cols-2 overflow-y-auto max-h-20">
+                            {formatSlots(g.bookingId?.Slot).map((time, index) => (
+                              <div key={index} className="text-sm text-gray-600 bg-gray-50 px-1 py-2 rounded border">
+                                {time}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
 
                       <button

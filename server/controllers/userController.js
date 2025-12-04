@@ -180,7 +180,7 @@ const checkAdmin = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        const { name, email, password, phone } = req.body || {}
+        const { name, email, password, phone, visibility } = req.body || {}
 
         const userId = req.user?.id
 
@@ -218,6 +218,7 @@ const updateUser = async (req, res) => {
         if (name) updateData.name = name;
         if (email) updateData.email = email;
         if (phone) updateData.phone = phone;
+        if (visibility) updateData.visibility = visibility;
 
         if (password) {
             const salt = await bcrypt.genSalt(10);

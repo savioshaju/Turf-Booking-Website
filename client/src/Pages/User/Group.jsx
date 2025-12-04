@@ -3,6 +3,8 @@ import { useSelector } from "react-redux"
 import axiosInstance from "../../Config/axiosInstance"
 import GroupDetails from "../../Components/User/GroupDetails"
 import GroupList from "../../Components/User/GroupList"
+import { toast } from "react-toastify"
+
 
 export default function Group() {
   const user = useSelector((state) => state.user.userData)
@@ -13,7 +15,7 @@ export default function Group() {
   const [applied, setApplied] = useState([])
   const [discover, setDiscover] = useState([])
   const [selectedGroup, setSelectedGroup] = useState(null)
-  const [activeTab, setActiveTab] = useState("members")
+  const [activeTab, setActiveTab] = useState("chat")
   const [requests, setRequests] = useState([])
 
   const [loadingList, setLoadingList] = useState(true)
@@ -125,31 +127,34 @@ export default function Group() {
     if (!groupId) return
 
     setLoadingDetails(true)
-
-    axiosInstance({
-      method: "GET",
-      url: `/group/details/${groupId}`
-    })
-      .then(res => {
-        const data = res?.data?.data || {}
-        setSelectedGroup(data.group || null)
-        setRequests(data.requests || [])
+    toast.promise(
+      axiosInstance({
+        method: "GET",
+        url: `/group/details/${groupId}`
       })
-      .catch(err => {
-        console.error("Group Details Error:", err)
-        setSelectedGroup(null)
-        setRequests([])
-      })
-      .finally(() => {
-        setLoadingDetails(false)
-      })
+        .then(res => {
+          const data = res?.data?.data || {}
+          setSelectedGroup(data.group || null)
+          setRequests(data.requests || [])
+        })
+        .catch(err => {
+          console.error("Group Details Error:", err)
+          const msg = err?.response?.data?.message || "Failed to get details"
+          toast.error(msg)
+          setSelectedGroup(null)
+          setRequests([])
+        })
+        .finally(() => {
+          setLoadingDetails(false)
+        })
+    )
   }
 
 
   const handleSelect = (g) => {
     if (!g || !g._id) return
 
-    setActiveTab("members")
+    setActiveTab("chat")
     loadGroupDetails(g._id)
 
     if (window.innerWidth < 1024) {
@@ -170,54 +175,94 @@ export default function Group() {
     return () => window.removeEventListener("popstate", handlePop)
   }, [])
 
-  const handleDecision = async (requestId, status) => {
+  const handleDecision = (requestId, status) => {
     if (!requestId) return
 
-    try {
-      await axiosInstance({
+    toast.promise(
+      axiosInstance({
         method: "PATCH",
         url: `/group/request/decide/${requestId}`,
         data: { status }
       })
-      await reloadAll()
-      if (selectedGroup?._id) {
-        await loadGroupDetails(selectedGroup._id)
+        .then(res => {
+          const msg = res?.data?.message
+          toast.success(msg)
+
+          return reloadAll()
+        })
+        .then(() => {
+          if (selectedGroup?._id) {
+            return loadGroupDetails(selectedGroup._id)
+          }
+        })
+        .catch(err => {
+          const msg = err?.response?.data?.message 
+          toast.error(msg)
+        }),
+      {
+        pending: "Processing..."
       }
-    } catch (err) {
-      console.error("Error making decision:", err)
-    }
+    )
   }
 
-  const handleLeave = async (groupId) => {
-    if (!groupId) return
 
-    try {
-      await axiosInstance({
+
+  const handleLeave = (groupId) => {
+    if (!groupId) return;
+
+    toast.promise(
+      axiosInstance({
         method: "DELETE",
         url: `/group/leave/${groupId}`
       })
-      await reloadAll()
-      setSelectedGroup(null)
-      setRequests([])
-    } catch (err) {
-      console.error("Error leaving group:", err)
-    }
+        .then(res => {
+          const msg = res?.data?.message || "Left group"
+          toast.success(msg)
+
+          return reloadAll()
+        })
+        .then(() => {
+          setSelectedGroup(null)
+          setRequests([])
+        })
+        .catch(err => {
+          const msg = err?.response?.data?.message || "Failed to leave group"
+          toast.error(msg)
+        }),
+      {
+        pending: "Leaving..."
+      }
+    )
   }
 
-  const handleRemovePlayer = async (playerId) => {
+
+  const handleRemovePlayer = (playerId) => {
     if (!playerId || !selectedGroup?._id) return
 
-    try {
-      await axiosInstance({
+    toast.promise(
+      axiosInstance({
         method: "DELETE",
         url: `/group/remove-player/${selectedGroup._id}/${playerId}`
       })
-      await reloadAll()
-      await loadGroupDetails(selectedGroup._id)
-    } catch (err) {
-      console.error("Error removing player:", err)
-    }
+        .then(res => {
+          const msg = res?.data?.message || "Player removed"
+          toast.success(msg)
+
+          return reloadAll()
+        })
+        .then(() => {
+          return loadGroupDetails(selectedGroup._id)
+        })
+        .catch(err => {
+          const msg = err?.response?.data?.message || "Failed to remove player"
+          toast.error(msg)
+        }),
+      {
+        pending: "Processing..."
+      }
+    )
   }
+
 
   const myGroups = myCreated
   const isOwner = selectedGroup?.ownerId?._id === userId
@@ -258,7 +303,7 @@ export default function Group() {
       </div>
       <div className="flex-1 overflow-y-auto p-6">
         <div className="space-y-4">
-          {[1, 2, 3,4].map((item) => (
+          {[1, 2, 3, 4].map((item) => (
             <div key={item} className="p-4 border border-gray-200 rounded-lg animate-pulse">
               <div className="h-5 bg-gray-200 rounded w-1/4 mb-3"></div>
               <div className="space-y-2">
