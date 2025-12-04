@@ -6,12 +6,11 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const app = express();
-const allowedOrigin = process.env.BASE_URL;
 
 const corsOptions = {
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (origin === allowedOrigin) {
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); 
+    if (/\.vercel\.app$/.test(origin) ) {
       console.log(`CORS allowed for origin: ${origin}`);
       return callback(null, true);
     }

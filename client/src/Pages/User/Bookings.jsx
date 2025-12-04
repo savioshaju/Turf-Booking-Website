@@ -44,7 +44,8 @@ export default function Bookings() {
       })
   }
   function hasGroup(bookingId) {
-    return groups.some(g => g.bookingId === bookingId)
+
+    return groups.some(g => g.bookingId?._id === bookingId)
   }
 
   function fetchBookings() {
@@ -135,7 +136,7 @@ export default function Bookings() {
   }
 
   return (
-    <div className="px-6  flex flex-col gap-8">
+    <div className="px-6  pb-8 flex flex-col gap-8">
       <h1 className="text-4xl font-bold text-start text-gray-900 mb-4">
         My Turf Bookings
       </h1>
@@ -209,7 +210,7 @@ export default function Bookings() {
                     </span>
                     {tab === "active" && (
                       <div className="flex gap-3">
-                        {!hasGroup(b.id) && b.status !== 'cancelled' && (
+                        {!hasGroup(b.id) && b.status !== "cancelled" && (
                           <button
                             onClick={() => {
                               setGroupForm({ ...groupForm, bookingId: b.id })

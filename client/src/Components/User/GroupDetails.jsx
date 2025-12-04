@@ -1,5 +1,5 @@
 import React from "react"
-import { Users, Calendar, MapPin, Clock, MessageSquare, User, Mail, Phone, X, LogOut, CheckCircle, XCircle, MoreHorizontal ,Crown} from "lucide-react"
+import { Users, Calendar, MapPin, Clock, MessageSquare, User, Mail, Phone, X, LogOut, CheckCircle, XCircle, MoreHorizontal, Crown } from "lucide-react"
 import GroupChat from "./GroupChat"
 
 function formatSlots(slotStr) {
@@ -252,6 +252,12 @@ function GroupDetails({
                 </div>
               </div>
             </div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex items-center justify-center text-center">
+              <p className="text-blue-700 text-sm">
+                This group will be deleted after {booking.date ? new Date(booking.date).toDateString() : "—"}
+              </p>
+            </div>
+
           </div>
         )}
 
