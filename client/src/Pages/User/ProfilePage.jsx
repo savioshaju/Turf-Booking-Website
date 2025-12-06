@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import { clearUserData, saveUserData } from '../..//store/slice/userSlice';
 import { User, Mail, Phone, Edit2, Save, X, LogOut, Trash2, Shield, Check, X as XIcon, Eye, EyeOff } from 'lucide-react'
 import { clearMyBookings } from '../../store/slice/myBookingSlice';
+import { resetBooking } from '../../store/slice/BookingSlice';
 const ProfilePage = () => {
     const navigate = useNavigate()
 
@@ -178,6 +179,8 @@ const ProfilePage = () => {
             }
         ).then(() => {
             dispatch(clearUserData());
+            dispatch(clearMyBookings())
+            dispatch(resetBooking())
             navigate('/login');
         });
     }

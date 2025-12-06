@@ -38,7 +38,7 @@ const createGroup = async (req, res) => {
         if (!booking) {
             return res.status(404).json({ success: false, message: "Booking not found" })
         }
-     
+
 
         if (booking.userId.toString() !== ownerId) {
             return res.status(403).json({ success: false, message: "You cannot create group" })
@@ -494,6 +494,55 @@ const removePlayer = async (req, res) => {
     }
 }
 
+const getAllMyGroupData = async (req, res) => {
+    try {
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({ success: false, message: "Unauthorized" });
+        }
+
+        const appliedRequests = await GroupRequest.find({ requesterId: userId }).select("groupId status");
+        const appliedGroupIds = appliedRequests.map(r => r.groupId.toString());
+
+        const [
+            createdGroups,
+            joinedGroups,
+            appliedGroups
+        ] = await Promise.all([
+
+            Group.find({ ownerId: userId })
+                .populate({ path: "bookingId", populate: { path: "turfId", select: "name location" } })
+                .populate("ownerId", "name email phone visibility")
+                .populate("players", "name email phone visibility"),
+
+            Group.find({ players: userId })
+                .populate({ path: "bookingId", populate: { path: "turfId", select: "name location" } })
+                .populate("ownerId", "name email phone visibility")
+                .populate("players", "name email phone visibility"),
+
+            Group.find({ _id: { $in: appliedGroupIds } })
+                .populate({ path: "bookingId", populate: { path: "turfId", select: "name location" } })
+                .populate("ownerId", "name email phone visibility")
+                .populate("players", "name email phone visibility")
+        ]);
+
+        return res.status(200).json({
+            success: true,
+            message: "All groups fetched successfully",
+            data: {
+                created: maskGroupList(createdGroups),
+                joined: maskGroupList(joinedGroups),
+                applied: maskGroupList(appliedGroups)
+            }
+        });
+
+    } catch (error) {
+        console.error("getAllMyGroupData Error:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+    }
+};
 
 
-module.exports = { createGroup, getGroupDetails, getMyAppliedGroups, getAllGroups, getGroupByBooking, sendJoinRequest, getJoinRequests, decideRequest, leaveGroup, getMyCreatedGroups, getMyJoinedGroups, autoDeleteExpiredGroups, removePlayer }
+
+
+module.exports = { createGroup, getGroupDetails, getAllMyGroupData, getMyAppliedGroups, getAllGroups, getGroupByBooking, sendJoinRequest, getJoinRequests, decideRequest, leaveGroup, getMyCreatedGroups, getMyJoinedGroups, autoDeleteExpiredGroups, removePlayer }

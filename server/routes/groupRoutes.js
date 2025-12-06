@@ -1,6 +1,6 @@
 const express = require("express");
 
-const { createGroup, getGroupByBooking,getGroupDetails, sendJoinRequest, getJoinRequests, decideRequest, leaveGroup, getMyCreatedGroups, getMyJoinedGroups, getMyAppliedGroups, getAllGroups, autoDeleteExpiredGroups,removePlayer } = require("../controllers/groupController")
+const { createGroup, getGroupByBooking,getGroupDetails, sendJoinRequest, getJoinRequests, decideRequest, leaveGroup, getMyCreatedGroups, getMyJoinedGroups, getMyAppliedGroups, getAllGroups, autoDeleteExpiredGroups,removePlayer, getAllMyGroupData } = require("../controllers/groupController")
 
 const authUser = require('../middlewares/authUser.js')
 
@@ -40,5 +40,8 @@ router.delete("/auto-clean", autoDeleteExpiredGroups)
 //remove group members
 router.delete("/remove-player/:groupId/:playerId",authUser,removePlayer)
 
+
+//get all my groups(joined , created, applied)
+router.get('/my-groups/all',authUser,getAllMyGroupData)
 
 module.exports = router;

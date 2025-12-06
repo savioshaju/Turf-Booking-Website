@@ -3,12 +3,11 @@ import axiosInstance from '../../Config/axiosInstance'
 import { Calendar, Clock, MapPin } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { useDispatch, useSelector } from 'react-redux'
-import { setMyBookings, updateBookingStatus } from '../../store/slice/myBookingSlice'
+import { setMyBookings, updateBookingStatus, updateAvlGrp } from '../../store/slice/myBookingSlice'
 
 export default function Bookings() {
   const dispatch = useDispatch()
   const [tab, setTab] = useState("active")
-  const [groups, setGroups] = useState([])
 
   const bookings = useSelector(state => state.myBooking.myBookings?.[tab] || [])
 
@@ -28,25 +27,6 @@ export default function Bookings() {
     else setLoading(false)
   }, [])
 
-  useEffect(() => {
-    fetchAllGroups()
-  }, [])
-  function fetchAllGroups() {
-    axiosInstance({
-      method: "GET",
-      url: "/group/my-groups/created"
-    })
-      .then(res => {
-        setGroups(res?.data?.data || [])
-      })
-      .catch(err => {
-        console.error("Group Fetch Error:", err)
-      })
-  }
-  function hasGroup(bookingId) {
-
-    return groups.some(g => g.bookingId?._id === bookingId)
-  }
 
   function fetchBookings() {
     setLoading(true)
@@ -99,8 +79,8 @@ export default function Bookings() {
         .then(res => {
           toast.success(res?.data?.message || "Group created successfully")
           setShowGroupModal(false)
+          dispatch(updateAvlGrp(groupForm.bookingId))
           setGroupForm({ bookingId: "", message: "", requiredPlayers: "" })
-          fetchAllGroups()
         })
         .catch(err => {
           console.error("Create Group Error:", err)
@@ -210,7 +190,7 @@ export default function Bookings() {
                     </span>
                     {tab === "active" && (
                       <div className="flex gap-3">
-                        {!hasGroup(b.id) && b.status !== "cancelled" && (
+                        {!b.groupAvailable && b.status !== "cancelled" && (
                           <button
                             onClick={() => {
                               setGroupForm({ ...groupForm, bookingId: b.id })

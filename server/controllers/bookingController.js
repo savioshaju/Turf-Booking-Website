@@ -1,6 +1,7 @@
 const Payment = require('../models/paymentModel.js')
 const Booking = require('../models/bookingModel.js')
 const Turf = require('../models/turfModel.js')
+const Group = require('../models/groupModel.js')
 
 function parseTimeToHour(timeStr, roundType) {
     const [time, modifier] = timeStr.split(' ')
@@ -134,13 +135,16 @@ const deleteBooking = async (req, res) => {
 
         await booking.save()
 
-         const formatted = {
+        const groupExists = await Group.exists({ bookingId: booking._id });
+
+        const formatted = {
             id: booking._id,
             teamName: booking.teamName,
             date: booking.date,
             Slot: booking.Slot,
             status: booking.status,
-            turfName: booking.turfId?.name || "Unknown Turf"
+            turfName: booking.turfId?.name || "Unknown Turf",
+            groupAvailable: !!groupExists
         }
 
         res.status(200).json({ success: true, message: `Booking status updated to '${booking.status}'`, data: formatted })
@@ -163,13 +167,19 @@ const getAllBookings = async (req, res) => {
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
+        const bookingIds = bookings.map(b => b._id);
+        const groups = await Group.find({ bookingId: { $in: bookingIds } }).select("bookingId");
+
+        const groupBookingIds = new Set(groups.map(g => g.bookingId.toString()));
+
         const formatted = bookings.map(b => ({
             id: b._id,
             teamName: b.teamName,
             date: b.date,
             Slot: b.Slot,
             status: b.status,
-            turfName: b.turfId?.name || "Unknown Turf"
+            turfName: b.turfId?.name || "Unknown Turf",
+            groupAvailable: groupBookingIds.has(b._id.toString())
         }));
         const active = formatted.filter(b => new Date(b.date) >= today);
         const past = formatted.filter(b => new Date(b.date) < today);

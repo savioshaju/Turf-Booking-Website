@@ -13,7 +13,6 @@ export default function Group() {
   const [myCreated, setMyCreated] = useState([])
   const [myJoined, setMyJoined] = useState([])
   const [applied, setApplied] = useState([])
-  const [discover, setDiscover] = useState([])
   const [selectedGroup, setSelectedGroup] = useState(null)
   const [activeTab, setActiveTab] = useState("chat")
   const [requests, setRequests] = useState([])
@@ -23,105 +22,38 @@ export default function Group() {
   const [showDetailsMobile, setShowDetailsMobile] = useState(false)
   const [initialLoad, setInitialLoad] = useState(true)
 
-  const loadCreated = useCallback(() => {
-    axiosInstance({
-      method: "GET",
-      url: "/group/my-groups/created"
-    })
-      .then(res => {
-        const data = res?.data?.data || []
-        setMyCreated(data)
-      })
-      .catch(err => {
-        console.error("Created Load Error:", err)
-        setMyCreated([])
-      })
-  }, [])
-
-
-  const loadJoined = useCallback(() => {
-    axiosInstance({
-      method: "GET",
-      url: "/group/my-groups/joined"
-    })
-      .then(res => {
-        const data = res?.data?.data || []
-        setMyJoined(data)
-      })
-      .catch(err => {
-        console.error("Joined Load Error:", err)
-        setMyJoined([])
-      })
-  }, [])
-
-
-  const loadApplied = useCallback(() => {
-    axiosInstance({
-      method: "GET",
-      url: "/group/my-groups/applied"
-    })
-      .then(res => {
-        const data = res?.data?.data || []
-        setApplied(data)
-      })
-      .catch(err => {
-        console.error("Applied Load Error:", err)
-        setApplied([])
-      })
-  }, [])
-
-
-  const loadDiscover = useCallback(() => {
-    axiosInstance({
-      method: "GET",
-      url: "/group/all"
-    })
-      .then(res => {
-        const data = res?.data?.data || []
-        setDiscover(data)
-      })
-      .catch(err => {
-        console.error("Discover Load Error:", err)
-        setDiscover([])
-      })
-  }, [])
-
-
-  const reloadAll = useCallback(() => {
+  const loadAllGroups = useCallback(() => {
     setLoadingList(true)
 
-    Promise.all([
-      new Promise(resolve => {
-        loadCreated()
-        resolve()
-      }),
-      new Promise(resolve => {
-        loadJoined()
-        resolve()
-      }),
-      new Promise(resolve => {
-        loadApplied()
-        resolve()
-      }),
-      new Promise(resolve => {
-        loadDiscover()
-        resolve()
+    axiosInstance({
+      method: "GET",
+      url: "/group/my-groups/all"
+    })
+      .then(res => {
+        const data = res?.data?.data || {}
+        setMyCreated(data.created || [])
+        setMyJoined(data.joined || [])
+        setApplied(data.applied || [])
       })
-    ])
-      .then(() => { })
       .catch(err => {
-        console.error("Reload All Error:", err)
+        console.error("All Groups Load Error:", err)
+        toast.error("Failed to load groups")
       })
       .finally(() => {
         setLoadingList(false)
         setInitialLoad(false)
       })
+  }, [])
 
-  }, [loadCreated, loadJoined, loadApplied, loadDiscover])
+  const reloadAll = useCallback(() => {
+    loadAllGroups()
+  }, [loadAllGroups])
+
 
   useEffect(() => {
     reloadAll()
   }, [reloadAll])
+
 
   const loadGroupDetails = (groupId) => {
     if (!groupId) return
@@ -196,7 +128,7 @@ export default function Group() {
           }
         })
         .catch(err => {
-          const msg = err?.response?.data?.message 
+          const msg = err?.response?.data?.message
           toast.error(msg)
         }),
       {
