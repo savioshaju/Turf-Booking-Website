@@ -11,6 +11,7 @@ const AdminTurfDetails = () => {
     const [bookings, setBookings] = useState([]);
     const [showEditModal, setShowEditModal] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
+    const [selDate, setSelDate] = useState('');
 
     const [editForm, setEditForm] = useState({
         name: '',
@@ -65,9 +66,6 @@ const AdminTurfDetails = () => {
             .finally(() => setLoading(false))
     }, [id, turf, dispatch])
 
-    useEffect(() => {
-        fetchBookings();
-    }, []);
 
     useEffect(() => {
         if (turf) {
@@ -91,7 +89,8 @@ const AdminTurfDetails = () => {
     const fetchBookings = () => {
         axiosInstance({
             method: 'GET',
-            url: `booking/turfbookings/${id}`
+            url: `booking/turfbookings/${id}?date=${selDate}`,
+
         })
             .then(res => {
                 setBookings(res.data.bookings || []);
@@ -204,8 +203,12 @@ const AdminTurfDetails = () => {
             </div>
         )
     }
+    useEffect(() => {
+        if (selDate !== '') {
 
-
+            fetchBookings()
+        }
+    }, [selDate])
 
     return (
         <div className="p-6 space-y-8">
@@ -283,46 +286,75 @@ const AdminTurfDetails = () => {
             )}
 
             <div className="bg-white rounded-2xl shadow-lg p-6">
-                <h2 className="text-2xl font-semibold mb-4">Today's Turf Bookings</h2>
-                {bookings.length === 0 ? (
-                    <p className="text-gray-500 text-center py-8">No bookings found for today.</p>
-                ) : (
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white">
-                            <thead className="bg-green-600 text-white">
-                                <tr>
-                                    <th className="px-6 py-3 text-left">#</th>
-                                    <th className="px-6 py-3 text-left">User Name</th>
-                                    <th className="px-6 py-3 text-left">Team Name</th>
-                                    <th className="px-6 py-3 text-left">Status</th>
-                                    <th className="px-6 py-3 text-left">Date</th>
-                                    <th className="px-6 py-3 text-left">Slots</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {bookings.map((booking, index) => (
-                                    <tr key={booking._id} className="border-t hover:bg-green-50 transition-colors">
-                                        <td className="px-6 py-3">{index + 1}</td>
-                                        <td className="px-6 py-3">{booking.userId?.name}</td>
-                                        <td className="px-6 py-3">{booking.teamName}</td>
-                                        <td className="px-6 py-3 capitalize">
-                                            <span className={`px-2 py-1 rounded-full text-xs ${booking.status === 'confirmed'
-                                                ? 'bg-green-100 text-green-800'
-                                                : booking.status === 'pending'
-                                                    ? 'bg-yellow-100 text-yellow-800'
-                                                    : 'bg-red-100 text-red-800'
-                                                }`}>
-                                                {booking.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-3">{new Date(booking.date).toLocaleDateString()}</td>
-                                        <td className="px-6 py-3">{booking.Slot}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                <h2 className="text-2xl font-semibold mb-4">Turf Bookings</h2>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-2 mb-2">
+                    <div className="flex items-center mb-4">
+                        <div className="w-1 h-6 bg-green-500 rounded-full mr-3"></div>
+                        <h2 className="text-xl font-semibold text-gray-800">Select Date</h2>
                     </div>
-                )}
+                    <input type="date" value={selDate} onChange={(e) => {
+                        setSelDate(e.target.value)
+                    }}
+                        className="p-3 border border-gray-300 rounded-lg focus:ring-1 focus:ring-green-500 focus:border-green-500 outline-none "
+                    />
+                </div>
+                {selDate === '' ?
+                    (<>
+                        <div className="my-8 text-center">
+                            <p className="text-gray-600">Select the date to view bookings</p>
+                        </div>
+                    </>)
+                    :
+
+                    (<>
+                        {bookings.length === 0 ? (<p className="text-gray-500 text-center py-8">
+                            No bookings found for{" "}
+                            <span className="text-green-600 font-semibold">
+                                {selDate ? new Date(selDate).toLocaleDateString() : "—"}
+                            </span>
+                            .
+                        </p>
+
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full bg-white">
+                                    <thead className="bg-green-600 text-white">
+                                        <tr>
+                                            <th className="px-6 py-3 text-left">#</th>
+                                            <th className="px-6 py-3 text-left">User Name</th>
+                                            <th className="px-6 py-3 text-left">Team Name</th>
+                                            <th className="px-6 py-3 text-left">Status</th>
+                                            <th className="px-6 py-3 text-left">Date</th>
+                                            <th className="px-6 py-3 text-left">Slots</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {bookings.map((booking, index) => (
+                                            <tr key={booking._id} className="border-t hover:bg-green-50 transition-colors">
+                                                <td className="px-6 py-3">{index + 1}</td>
+                                                <td className="px-6 py-3">{booking.userId?.name}</td>
+                                                <td className="px-6 py-3">{booking.teamName}</td>
+                                                <td className="px-6 py-3 capitalize">
+                                                    <span className={`px-2 py-1 rounded-full text-xs ${booking.status === 'confirmed'
+                                                        ? 'bg-green-100 text-green-800'
+                                                        : booking.status === 'pending'
+                                                            ? 'bg-yellow-100 text-yellow-800'
+                                                            : 'bg-red-100 text-red-800'
+                                                        }`}>
+                                                        {booking.status}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-3">{new Date(booking.date).toLocaleDateString()}</td>
+                                                <td className="px-6 py-3">{booking.Slot}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
+                    </>
+                    )
+                }
             </div>
 
             {showEditModal && (

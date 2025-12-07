@@ -102,7 +102,7 @@ const sendJoinRequest = async (req, res) => {
             return res.status(400).json({ success: false, message: "Group ID is required" })
         }
 
-        const group = await Group.findById(groupId)
+        const group = await Group.findById(groupId).populate('bookingId')
         if (!group) {
             return res.status(404).json({ success: false, message: "Group not found" })
         }
@@ -119,6 +119,11 @@ const sendJoinRequest = async (req, res) => {
         const existingRequest = await GroupRequest.findOne({ groupId, requesterId: userId })
         if (existingRequest) {
             return res.status(400).json({ success: false, message: "Request already sent" })
+        }
+
+        if(group.bookingId?.status!=='confirmed'){
+            return res.status(400).json({ success: false, message: "Booking has been cancelled" })
+
         }
 
         const request = new GroupRequest({
@@ -338,10 +343,12 @@ const getAllGroups = async (req, res) => {
         const appliedRequests = await GroupRequest.find({ requesterId: userId }).select("groupId")
         const appliedIds = appliedRequests.map(r => r.groupId.toString())
 
-        const groups = await Group.find({ ownerId: { $ne: userId }, players: { $ne: userId }, _id: { $nin: appliedIds } }).populate({ path: "bookingId", populate: { path: "turfId" } }).populate("ownerId", "name email phone visibility")
+        let groups = await Group.find({ ownerId: { $ne: userId }, players: { $ne: userId }, _id: { $nin: appliedIds } }).populate({ path: "bookingId", match: { status: "confirmed" }, populate: { path: "turfId" } }).populate("ownerId", "name email phone visibility")
             .populate("players", "name email phone visibility")
 
-        res.status(200).json({ success: true, message: "Applied groups fetched", data: maskGroupList(groups) })
+        groups = groups.filter(g => g.bookingId !== null)
+
+        res.status(200).json({ success: true, message: "All groups fetched", data: maskGroupList(groups) })
 
     } catch (error) {
         console.error('Get All Groups Error:', error)
@@ -521,7 +528,7 @@ const getAllMyGroupData = async (req, res) => {
                 .populate("players", "name email phone visibility"),
 
             Group.find({ _id: { $in: appliedGroupIds } })
-                .populate({ path: "bookingId", populate: { path: "turfId", select: "name location" } })
+                .populate({ path: "bookingId",  populate: { path: "turfId", select: "name location" } })
                 .populate("ownerId", "name email phone visibility")
                 .populate("players", "name email phone visibility")
         ]);

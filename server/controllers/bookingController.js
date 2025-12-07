@@ -195,14 +195,22 @@ const getAllTurfBookings = async (req, res) => {
     try {
         const turfId = req.params.id;
 
+        const { date } = req.query
+
+        if (!date) {
+            return res.status(400).json({ success: false, message: "Date is required" })
+        }
+
         const turfExists = await Turf.findById(turfId);
         if (!turfExists) {
             return res.status(404).json({ success: false, message: 'No turfs found' });
         }
 
-        const today = new Date();
-        const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-        const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+
+        const startOfDay = new Date(date)
+        startOfDay.setHours(0, 0, 0, 0)
+        const endOfDay = new Date(date)
+        endOfDay.setHours(23, 59, 59, 999)
 
         const bookings = await Booking.find({
             turfId,

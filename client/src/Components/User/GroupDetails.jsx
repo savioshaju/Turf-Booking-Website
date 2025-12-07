@@ -119,7 +119,15 @@ function GroupDetails({
 
       <div className="flex-1 overflow-y-auto p-6">
         {activeTab === "chat" && (
-          <GroupChat groupId={group._id} />
+
+          group.bookingId.status === 'confirmed' ?
+            < GroupChat groupId={group._id} /> :
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center justify-center text-center">
+              <p className="text-red-700 text-sm">
+                The booking has been cancelled
+              </p>
+            </div>
+
         )}
         {activeTab === "members" && (
           <div>
