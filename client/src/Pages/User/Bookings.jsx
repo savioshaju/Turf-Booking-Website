@@ -25,14 +25,15 @@ export default function Bookings() {
   useEffect(() => {
     if (bookings.length === 0) fetchBookings()
     else setLoading(false)
-  }, [])
+  }, [tab])
 
+  const [past, setPast] = useState(false)
 
   function fetchBookings() {
     setLoading(true)
     axiosInstance({
       method: 'GET',
-      url: '/booking/my-bookings'
+      url: `/booking/my-bookings/?past=${tab === "past"}`
     })
       .then(res => {
         dispatch(setMyBookings(res?.data?.data || { active: [], past: [] }))
@@ -103,6 +104,8 @@ export default function Bookings() {
   }
 
 
+
+
   function formatTime(slotString) {
     const slots = slotString.split(',').map(Number)
     return slots
@@ -146,79 +149,127 @@ export default function Bookings() {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto px-4">
-              {bookings?.map(b => (
-                <div
-                  key={b.id}
-                  className={`p-6 rounded-2xl shadow-xl relative 
+            {tab === "active" ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mx-auto px-4">
+                {bookings?.map(b => (
+                  <div
+                    key={b.id}
+                    className={`p-6 rounded-2xl shadow-xl relative 
               ${b.status === 'confirmed'
-                      ? 'border-l-8 border-green-500'
-                      : ' border-l-8 border-yellow-500'}
+                        ? 'border-l-8 border-green-500'
+                        : ' border-l-8 border-yellow-500'}
               flex flex-col justify-between transition-all duration-300 hover:scale-[1.02] hover:shadow-[0_0_20px_#00000025]`}
-                >
-                  <div>
-                    <div className="text-2xl font-bold text-gray-800 mb-1">
-                      {b.teamName}
-                    </div>
-                    <div className="flex items-center text-gray-700 gap-2">
-                      <MapPin className="w-4 h-4" />
-                      <span className="text-sm">{b.turfName}</span>
-                    </div>
-                    <div className="mt-4 space-y-2 text-gray-700">
-                      <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-indigo-600" />
-                        <span>{formatDate(b.date)}</span>
+                  >
+                    <div>
+                      <div className="text-2xl font-bold text-gray-800 mb-1">
+                        {b.teamName}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <Clock className="w-4 h-4 text-indigo-600" />
-                        <div className="text-sm max-h-10 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
-                          {formatTime(b.Slot).map((slot, i) => (
-                            <div key={i}>{slot}</div>
-                          ))}
+                      <div className="flex items-center text-gray-700 gap-2">
+                        <MapPin className="w-4 h-4" />
+                        <span className="text-sm">{b.turfName}</span>
+                      </div>
+                      <div className="mt-4 space-y-2 text-gray-700">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="w-4 h-4 text-indigo-600" />
+                          <span>{formatDate(b.date)}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="w-4 h-4 text-indigo-600" />
+                          <div className="text-sm max-h-10 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-1">
+                            {formatTime(b.Slot).map((slot, i) => (
+                              <div key={i}>{slot}</div>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="mt-6 flex flex-col items-start gap-2">
-                    <span
-                      className={`px-3 py-1 rounded-full text-sm font-semibold 
+                    <div className="mt-6 flex flex-col items-start gap-2">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-semibold 
                   ${b.status === 'confirmed'
-                          ? 'bg-green-200 text-green-700'
-                          : 'bg-yellow-200 text-yellow-700'}`}
-                    >
-                      {b.status.toUpperCase()}
-                    </span>
-                    {tab === "active" && (
-                      <div className="flex gap-3">
-                        {!b.groupAvailable && b.status !== "cancelled" && (
+                            ? 'bg-green-200 text-green-700'
+                            : 'bg-yellow-200 text-yellow-700'}`}
+                      >
+                        {b.status.toUpperCase()}
+                      </span>
+                      {tab === "active" && (
+                        <div className="flex gap-3">
+                          {!b.groupAvailable && b.status !== "cancelled" && (
+                            <button
+                              onClick={() => {
+                                setGroupForm({ ...groupForm, bookingId: b.id })
+                                setShowGroupModal(true)
+                              }}
+                              className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-all"
+                            >
+                              Create Group
+                            </button>
+                          )}
+
                           <button
-                            onClick={() => {
-                              setGroupForm({ ...groupForm, bookingId: b.id })
-                              setShowGroupModal(true)
-                            }}
-                            className="px-4 py-2 rounded-lg bg-blue-600 text-white font-semibold shadow-md hover:bg-blue-700 transition-all"
-                          >
-                            Create Group
-                          </button>
-                        )}
-
-                        <button
-                          onClick={() => toggleBooking(b.id)}
-                          className={`px-4 py-2 rounded-lg text-white font-semibold shadow-md transition-all duration-300
+                            onClick={() => toggleBooking(b.id)}
+                            className={`px-4 py-2 rounded-lg text-white font-semibold shadow-md transition-all duration-300
                             ${b.status === 'cancelled'
-                              ? 'bg-green-600 hover:bg-green-700'
-                              : 'bg-red-600 hover:bg-red-700'}`}
-                        >
-                          {b.status === 'cancelled' ? 'Reconfirm' : 'Cancel'}
-                        </button>
+                                ? 'bg-green-600 hover:bg-green-700'
+                                : 'bg-red-600 hover:bg-red-700'}`}
+                          >
+                            {b.status === 'cancelled' ? 'Reconfirm' : 'Cancel'}
+                          </button>
 
-                      </div>
-                    )}
+                        </div>
+                      )}
 
+                    </div>
                   </div>
+                ))}
+              </div>)
+              :
+              (<div>
+                <div className="overflow-x-auto">
+                  <table className="min-w-full bg-white">
+                    <thead className="bg-green-600 text-white">
+                      <tr>
+                        <th className="px-6 py-3 text-left">#</th>
+                        <th className="px-6 py-3 text-left">Team Name</th>
+                        <th className="px-6 py-3 text-left">Turf Name</th>
+                        <th className="px-6 py-3 text-left">Status</th>
+                        <th className="px-6 py-3 text-left">Date</th>
+                        <th className="px-6 py-3 text-left">Slots</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bookings.map((booking, index) => (
+                        <tr key={booking._id} className="border-t hover:bg-green-50 transition-colors">
+                          <td className="px-6 py-3">{index + 1}</td>
+                          <td className="px-6 py-3">{booking.teamName}</td>
+                          <td className="px-6 py-3">{booking.turfName}</td>
+                          <td className="px-6 py-3 capitalize">
+                            <span className={`px-2 py-1 rounded-full text-xs ${booking.status === 'confirmed'
+                              ? 'bg-green-100 text-green-800'
+                              : booking.status === 'pending'
+                                ? 'bg-yellow-100 text-yellow-800'
+                                : 'bg-red-100 text-red-800'
+                              }`}>
+                              {booking.status}
+                            </span>
+                          </td>
+                          <td className="px-6 py-3"><span>{formatDate(booking.date)}</span></td>
+                          <td className="px-6 py-3">
+                            <div className='max-w-[400px] px-1 flex  overflow-x-auto gap-2 no-scrollbar'>
+                              {formatTime(booking.Slot).map((time, index) => (
+                                <div key={index} className="text-sm text-gray-600 bg-gray-50 px-1 py-2  whitespace-nowrap rounded border">
+                                  {time}
+                                </div>
+                              ))}
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-              ))}
-            </div>
+              </div>)
+            }
           </>
         )}
       </div>

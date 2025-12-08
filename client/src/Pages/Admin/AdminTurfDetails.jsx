@@ -195,6 +195,38 @@ const AdminTurfDetails = () => {
     }, [showEditModal, turf]);
 
 
+    useEffect(() => {
+        if (selDate !== '') {
+
+            fetchBookings()
+        }
+    }, [selDate])
+
+
+    function formatDate(dateStr) {
+        const date = new Date(dateStr)
+        return date.toLocaleDateString('en-IN', {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+        })
+    }
+
+
+
+
+    function formatTime(slotString) {
+        const slots = slotString.split(',').map(Number)
+        return slots
+            .map(s => {
+                const startHour = (s - 1) % 12 === 0 ? 12 : (s - 1) % 12
+                const startPeriod = (s - 1) < 12 ? 'AM' : 'PM'
+                const endHour = s % 12 === 0 ? 12 : s % 12
+                const endPeriod = s < 12 ? 'AM' : 'PM'
+                return `${startHour}:00 ${startPeriod} - ${endHour}:00 ${endPeriod}`
+            })
+    }
 
     if (loading) {
         return (
@@ -203,12 +235,6 @@ const AdminTurfDetails = () => {
             </div>
         )
     }
-    useEffect(() => {
-        if (selDate !== '') {
-
-            fetchBookings()
-        }
-    }, [selDate])
 
     return (
         <div className="p-6 space-y-8">
@@ -332,7 +358,7 @@ const AdminTurfDetails = () => {
                                         {bookings.map((booking, index) => (
                                             <tr key={booking._id} className="border-t hover:bg-green-50 transition-colors">
                                                 <td className="px-6 py-3">{index + 1}</td>
-                                                <td className="px-6 py-3">{booking.userId?.name}</td>
+                                                <td className="px-6 py-3">{booking.userId?.name||"No Name"}</td>
                                                 <td className="px-6 py-3">{booking.teamName}</td>
                                                 <td className="px-6 py-3 capitalize">
                                                     <span className={`px-2 py-1 rounded-full text-xs ${booking.status === 'confirmed'
@@ -344,8 +370,16 @@ const AdminTurfDetails = () => {
                                                         {booking.status}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-3">{new Date(booking.date).toLocaleDateString()}</td>
-                                                <td className="px-6 py-3">{booking.Slot}</td>
+                                                <td className="px-6 py-3"><span>{formatDate(booking.date)}</span></td>
+                                                <td className="px-6 py-3">
+                                                    <div className='max-w-[200px] px-1 flex  overflow-x-auto gap-2 no-scrollbar'>
+                                                        {formatTime(booking.Slot).map((time, index) => (
+                                                            <div key={index} className="text-sm text-gray-600 bg-gray-50 px-1 py-2  whitespace-nowrap rounded border">
+                                                                {time}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>

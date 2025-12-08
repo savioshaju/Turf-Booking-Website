@@ -158,6 +158,7 @@ const deleteBooking = async (req, res) => {
 const getAllBookings = async (req, res) => {
     try {
         const userId = req.user.id
+        const pastBookings = req.query.past === "true";
 
         const bookings = await Booking.find({ userId }).populate('turfId', 'name')
 
@@ -182,7 +183,13 @@ const getAllBookings = async (req, res) => {
             groupAvailable: groupBookingIds.has(b._id.toString())
         }));
         const active = formatted.filter(b => new Date(b.date) >= today);
-        const past = formatted.filter(b => new Date(b.date) < today);
+
+        let past = [];
+
+        if (pastBookings) {
+            past = formatted.filter(b => new Date(b.date) < today);
+        }
+
 
         res.status(200).json({ success: true, data: { active: active, past: past } })
 
