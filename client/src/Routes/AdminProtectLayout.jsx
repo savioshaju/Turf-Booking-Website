@@ -31,8 +31,8 @@ export default function AdminProtectLayout() {
                 setLoading(false);
             })
             .catch((err) => {
-                toast.error( 'Admin access needed');
-                
+                toast.error('Admin access needed');
+
                 if (!loading && (!userData)) {
                     dispatch(clearUserData());
                     navigate('/login');
@@ -47,7 +47,7 @@ export default function AdminProtectLayout() {
     if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
             </div>
         )
     }

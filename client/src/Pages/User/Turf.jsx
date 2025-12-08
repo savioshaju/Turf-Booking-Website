@@ -22,7 +22,9 @@ function Turf() {
 
                     toast.error(err?.response?.data?.message || 'Failed to fetch turfs')
                 })
-                .finally(() => setLoading(false))
+                .finally(()=>{
+                     setLoading(false)
+                })
         }
         else {
             setLoading(false)
@@ -49,7 +51,7 @@ function Turf() {
     if (loading)
         return (
             <div className="flex justify-center items-center h-48">
-                <span className="loading loading-spinner text-primary w-10 h-10" />
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
             </div>
         )
 

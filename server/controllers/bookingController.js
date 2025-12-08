@@ -147,7 +147,7 @@ const deleteBooking = async (req, res) => {
             groupAvailable: !!groupExists
         }
 
-        res.status(200).json({ success: true, message: `Booking status updated to '${booking.status}'`, data: formatted })
+        res.status(200).json({ success: true, message: `Booking status updated to ${booking.status}`, data: formatted })
 
     } catch (error) {
         console.error('Delete Booking Error:', error)

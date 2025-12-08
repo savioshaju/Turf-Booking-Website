@@ -50,6 +50,7 @@ const AdminAllturf = () => {
     useEffect(() => {
         fetchTurfs()
     }, [])
+    
     if (loading) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -60,7 +61,7 @@ const AdminAllturf = () => {
 
 
     return (
-        <div className="p-6 bg-gray-50 min-h-screen">
+        <div className="p-6 bg-gray-50">
             {loading ? (
                 <div className="flex justify-center items-center h-64">
                     <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>

@@ -6,9 +6,9 @@ import AdminFooter from '../Components/Admin/AdminFooter'
 const AdminLayout = () => {
     return (
 
-        <main className="z-20 flex-1 transition-all  duration-500 overflow-auto" >
+        <main className="flex flex-col min-h-screen" >
             <AdminNavBar />
-            <div className=''>
+            <div className='flex-grow'>
                 <Outlet />
             </div>
             <AdminFooter />

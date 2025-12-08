@@ -125,7 +125,7 @@ export default function AddTurfForm({ onCancel, onSuccess }) {
 
 
   return (
-    <div className="min-h-screen flex justify-center items-center  p-4">
+    <div className="flex justify-center items-center  p-4">
       <form
         onSubmit={handleSubmit}
         className="bg-white shadow-2xl rounded-3xl p-6 w-full max-w-4xl border-l-8 border-emerald-500"

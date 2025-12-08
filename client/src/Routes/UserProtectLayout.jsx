@@ -29,7 +29,7 @@ export default function UserProtectLayout() {
             })
             .catch((err) => {
                 dispatch(clearUserData());
-                toast.error(err?.response?.data?.message ||'Login to access');
+                toast.error(err?.response?.data?.message || 'Login to access');
                 setLoading(false);
                 navigate('/login');
             });
@@ -37,7 +37,7 @@ export default function UserProtectLayout() {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center h-64">
+            <div className="flex justify-center items-center h-48">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
             </div>
         )

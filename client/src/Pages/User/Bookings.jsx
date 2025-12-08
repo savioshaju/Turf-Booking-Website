@@ -138,7 +138,7 @@ export default function Bookings() {
         </div>
         {loading ? (
           <div className="flex justify-center items-center h-48">
-            <span className="loading loading-spinner text-primary w-10 h-10" />
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600"></div>
           </div>
         ) : bookings.length === 0 ? (
           <div className="flex flex-col justify-center items-center h-48 text-gray-500">
